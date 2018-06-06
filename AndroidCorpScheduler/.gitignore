@@ -7,3 +7,12 @@
 /build
 /captures
 .externalNativeBuild
+*.DS_Store
+*.pyc
+*.idea
+.idea/*
+*.class
+*/build/*
+*.java~*
+*.orig
+*.apk
