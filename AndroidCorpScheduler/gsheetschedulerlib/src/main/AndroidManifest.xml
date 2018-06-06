@@ -28,7 +28,7 @@
         android:largeHeap="true"
         android:supportsRtl="true">
         <activity android:name=".view.LoginActivity" />
-        <activity android:name=".view.MainActivity"></activity>
+        <activity android:name=".view.MainActivity"/>
     </application>
 
 </manifest>

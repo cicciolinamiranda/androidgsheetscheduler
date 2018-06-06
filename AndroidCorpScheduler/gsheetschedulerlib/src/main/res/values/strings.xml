@@ -12,4 +12,17 @@
     <string name="no_network_avail">No network available</string>
     <string name="error_sign_in">Oops, something went wrong. Please check your network connection</string>
 
+    <string name="spinner_prompt">- SELECT -</string>
+
+    <string-array name="spinner_arrays">
+        <item>item 1</item>
+        <item>item 2</item>
+        <item>item 3</item>
+        <item>item 4</item>
+        <item>item 5</item>
+        <item>item 6</item>
+        <item>item 7</item>
+        <item>item 8</item>
+    </string-array>
+
 </resources>

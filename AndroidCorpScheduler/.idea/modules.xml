@@ -3,7 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AndroidCorpScheduler.iml" filepath="$PROJECT_DIR$/AndroidCorpScheduler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AndroidCorpScheduler.iml" filepath="$PROJECT_DIR$/AndroidCorpScheduler.iml" />
       <module fileurl="file://$PROJECT_DIR$/app_run_noc_scheduler/app_run_noc_scheduler.iml" filepath="$PROJECT_DIR$/app_run_noc_scheduler/app_run_noc_scheduler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app_run_noc_scheduler/app_run_noc_scheduler.iml" filepath="$PROJECT_DIR$/app_run_noc_scheduler/app_run_noc_scheduler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gsheetschedulerlib/gsheetschedulerlib.iml" filepath="$PROJECT_DIR$/gsheetschedulerlib/gsheetschedulerlib.iml" />
       <module fileurl="file://$PROJECT_DIR$/gsheetschedulerlib/gsheetschedulerlib.iml" filepath="$PROJECT_DIR$/gsheetschedulerlib/gsheetschedulerlib.iml" />
     </modules>
   </component>
