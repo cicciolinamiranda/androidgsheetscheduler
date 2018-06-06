@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         dataModels= new ArrayList<>();
 
         dataModels.add(new DataModel("Kevin Fugaban", "Developer", "Corp","22:00"));
-        dataModels.add(new DataModel("Cicci Miranda", "Developer", "Corp","22:00"));
+        dataModels.add(new DataModel("Cicciolina Magdangal", "Developer", "Corp","22:00"));
         dataModels.add(new DataModel("Miani Agbayani", "Developer", "Corp","22:00"));
 
         adapter = new MainListAdapter(dataModels, MainActivity.this);
