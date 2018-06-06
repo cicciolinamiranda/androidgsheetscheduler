@@ -26,7 +26,6 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.ExponentialBackOff;
-import com.google.api.services.drive.DriveScopes;
 import com.google.scheduler.MainApplication;
 import com.google.scheduler.R;
 import com.google.scheduler.util.Util;
@@ -45,6 +44,7 @@ import static com.google.scheduler.constants.AppConstants.RC_GET_TOKEN;
 import static com.google.scheduler.constants.AppConstants.REQUEST_GOOGLE_PLAY_SERVICES;
 import static com.google.scheduler.constants.AppConstants.REQUEST_PERMISSIONS;
 import static com.google.scheduler.constants.AppConstants.REQUEST_PERMISSION_GET_ACCOUNTS;
+import static com.google.scheduler.constants.AppConstants.SCOPES;
 
 /**
  * Created by cicciolina on 6/6/18.
@@ -57,7 +57,6 @@ public class BaseAuthPresenter {
     protected GoogleApiClient mGoogleApiClient;
     protected static final HttpTransport transport = new NetHttpTransport();
     protected static final JsonFactory jsonFactory = new JacksonFactory();
-    public static final String[] SCOPES = { DriveScopes.DRIVE };
     protected GoogleAccountCredential mCredential;
 
     public BaseAuthPresenter(Context mContext,

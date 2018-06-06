@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
@@ -28,8 +29,8 @@ public abstract class BaseGSheetAsyncTask extends AsyncTask<Object, Void, Object
     protected HttpTransport transport;
     protected JsonFactory jsonFactory;
 
-    public BaseGSheetAsyncTask(GoogleAccountCredential credential,
-                               Context context,
+    public BaseGSheetAsyncTask(GoogleAccountCredential googleAccountCredential,
+                                Context context,
                                BaseGSheetListener listener,
                                String spreadsheetId,
                                String tabSheetName) {
@@ -40,7 +41,7 @@ public abstract class BaseGSheetAsyncTask extends AsyncTask<Object, Void, Object
         transport = AndroidHttp.newCompatibleTransport();
         jsonFactory = JacksonFactory.getDefaultInstance();
         mService = new com.google.api.services.sheets.v4.Sheets.Builder(
-                transport, jsonFactory, credential)
+                transport, jsonFactory, googleAccountCredential)
                 .setApplicationName(context.getString(R.string.app_name))
                 .build();
     }
@@ -54,11 +55,22 @@ public abstract class BaseGSheetAsyncTask extends AsyncTask<Object, Void, Object
             e.printStackTrace();
             cancel(true);
             return null;
-        } catch (IllegalArgumentException e) {
+        }catch (GoogleJsonResponseException e) {
+            if(e.getStatusCode() == 403 || e.getStatusCode() == 400) {
+                listener.userNotPermitted();
+            }
             e.printStackTrace();
             cancel(true);
             return null;
-        } catch (Exception e) {
+        }
+        catch (IllegalArgumentException e) {
+            listener.userNotPermitted();
+            e.printStackTrace();
+            cancel(true);
+            return null;
+        }
+        catch (Exception e) {
+            listener.userNotPermitted();
             e.printStackTrace();
             cancel(true);
             return null;
@@ -69,5 +81,6 @@ public abstract class BaseGSheetAsyncTask extends AsyncTask<Object, Void, Object
 
     public interface BaseGSheetListener {
         void requestForAuthorization(Intent intent);
+        void userNotPermitted();
     }
 }

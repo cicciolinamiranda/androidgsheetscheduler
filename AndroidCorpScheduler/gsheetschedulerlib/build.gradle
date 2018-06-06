@@ -131,4 +131,6 @@ dependencies {
     compile 'com.google.apis:google-api-services-drive:v3-rev85-1.23.0'
     compile 'pub.devrel:easypermissions:0.3.0'
     testCompile 'junit:junit:4.12'
+    testCompile "org.robolectric:robolectric:3.8"
+    compile 'com.google.guava:guava:19.0'
 }

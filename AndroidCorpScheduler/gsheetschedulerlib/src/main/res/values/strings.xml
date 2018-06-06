@@ -11,5 +11,7 @@
     <string name="app_version">v0.0</string>
     <string name="no_network_avail">No network available</string>
     <string name="error_sign_in">Oops, something went wrong. Please check your network connection</string>
+    <string name="spreadsheet_id">1Q_Dc-fLg0-9AX4vx_mbm8AshMwhfFS5pavCvHnQD9LM</string>
+    <string name="error_user_unauthorized_in_gsheet">User not authorized in gsheet id</string>
 
 </resources>

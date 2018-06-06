@@ -1,5 +1,7 @@
 package com.google.scheduler.constants;
 
+import com.google.api.services.drive.DriveScopes;
+
 /**
  * Created by cicciolina on 6/6/18.
  */
@@ -12,4 +14,6 @@ public class AppConstants {
     public static final int RC_GET_TOKEN = 9002;
 
     public static final int REQUEST_AUTHORIZATION = 0x96;
+    public static final String[] SCOPES = { DriveScopes.DRIVE };
+
 }

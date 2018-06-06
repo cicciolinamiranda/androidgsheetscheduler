@@ -18,10 +18,10 @@ public class RestGetLobInGSheet extends BaseGSheetAsyncTask {
     private Listener listener;
     private final static String RANGE = "B2:B";
 
-    public RestGetLobInGSheet(GoogleAccountCredential credential,
-                                           Context context, Listener listener, String spreadsheetId,
-                                           String tabSheetName) {
-        super(credential, context, listener, spreadsheetId, tabSheetName);
+    public RestGetLobInGSheet(GoogleAccountCredential googleAccountCredential,
+                              Context context, Listener listener, String spreadsheetId,
+                              String tabSheetName) {
+        super(googleAccountCredential, context, listener, spreadsheetId, tabSheetName);
         this.listener = listener;
     }
 
@@ -53,7 +53,9 @@ public class RestGetLobInGSheet extends BaseGSheetAsyncTask {
 
         for(List<Object> lobArr: values){
 
-            lobList.add((String)lobArr.get(0));
+            if(!lobList.contains(lobArr.get(0))) {
+                lobList.add((String) lobArr.get(0));
+            }
 
         }
 
