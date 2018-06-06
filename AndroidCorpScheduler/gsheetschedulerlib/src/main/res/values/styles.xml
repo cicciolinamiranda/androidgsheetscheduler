@@ -5,4 +5,10 @@
         <!--<item name="android:textColor">#ffffff</item>-->
         <!--<item name="android:background">@color/colorPrimary</item>-->
     </style>
+
+    <style name="LinearProgress" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">#db3236</item>
+        <item name="android:progressBackgroundTint">#E6E6E6</item>
+    </style>
+
 </resources>

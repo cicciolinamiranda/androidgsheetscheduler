@@ -45,22 +45,28 @@ public class MainListAdapter extends ArrayAdapter<DataModel> {
 
             viewHolder = new ViewHolder();
             LayoutInflater inflater = LayoutInflater.from(getContext());
-            convertView = inflater.inflate(R.layout.custom_list_row, parent, false);
-            viewHolder.txt_name = convertView.findViewById(R.id.txt_name);
-            viewHolder.txt_tierGroup = convertView.findViewById(R.id.txt_tierGroup);
-            viewHolder.txt_role = convertView.findViewById(R.id.txt_role);
-            viewHolder.txt_time = convertView.findViewById(R.id.txt_time);
+
+            if(!dataSet.isEmpty()) {
+                convertView = inflater.inflate(R.layout.custom_list_row, parent, false);
+                viewHolder.txt_name = convertView.findViewById(R.id.txt_name);
+                viewHolder.txt_tierGroup = convertView.findViewById(R.id.txt_tierGroup);
+                viewHolder.txt_role = convertView.findViewById(R.id.txt_role);
+                viewHolder.txt_time = convertView.findViewById(R.id.txt_time);
+            }else{
+                convertView = inflater.inflate(R.layout.empty_list_row, parent, false);
+            }
 
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-
-        viewHolder.txt_name.setText(dataModel.getName());
-        viewHolder.txt_tierGroup.setText(dataModel.getTierGroup());
-        viewHolder.txt_role.setText(dataModel.getRole());
-        viewHolder.txt_time.setText(dataModel.getTime());
+        if(!dataSet.isEmpty()) {
+            viewHolder.txt_name.setText(dataModel.getName());
+            viewHolder.txt_tierGroup.setText(dataModel.getTierGroup());
+            viewHolder.txt_role.setText(dataModel.getRole());
+            viewHolder.txt_time.setText(dataModel.getTime());
+        }
         return convertView;
     }
 }
