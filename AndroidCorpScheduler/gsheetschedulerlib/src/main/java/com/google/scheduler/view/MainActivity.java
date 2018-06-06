@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,7 +16,6 @@ import com.google.scheduler.R;
 import com.google.scheduler.interfaces.MainInterface;
 import com.google.scheduler.presenter.MainPresenter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.scheduler.constants.AppConstants.REQUEST_PERMISSIONS;
@@ -25,7 +23,7 @@ import static com.google.scheduler.constants.AppConstants.REQUEST_PERMISSIONS;
 public class MainActivity extends BaseAuthActivity implements MainInterface {
 
 
-    private ArrayList<DataModel> dataModels;
+//    private ArrayList<DataModel> dataModels;
     private ListView main_list;
     private MainListAdapter adapter;
     private Spinner spinner;
@@ -39,23 +37,19 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
         mainPresenter = new MainPresenter(this, this);
         mainPresenter.getLobList();
         main_list = findViewById(R.id.main_list);
-        dataModels= new ArrayList<>();
-
+        main_list.setVisibility(View.GONE);
 
         spinner = findViewById(R.id.spinner);
 
-        dataModels.add(new DataModel("Kevin Fugaban", "Developer", "Corp","22:00"));
-        dataModels.add(new DataModel("Cicciolina Magdangal", "Developer", "Corp","22:00"));
-        dataModels.add(new DataModel("Miani Agbayani", "Developer", "Corp","22:00"));
-
-        adapter = new MainListAdapter(dataModels, MainActivity.this);
-        main_list.setAdapter(adapter);
 
     }
 
     private void refreshData() {
+
+        main_list.setVisibility(View.GONE);
         mainPresenter.getLobList();
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -78,15 +72,21 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
     }
 
     @Override
-    public void getEmployees(List<String> employees) {
+    public void getEmployees(List<DataModel> employees) {
         Log.d(MainActivity.class.getName(), employees.toString());
+
+        if(employees != null && !employees.isEmpty()) {
+            adapter = new MainListAdapter(employees, MainActivity.this);
+            main_list.setAdapter(adapter);
+            main_list.setVisibility(View.VISIBLE);
+        }
+
 
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        MenuInflater mi = getMenuInflater();
         refreshMenu.setVisible(true);
         return true;
     }
@@ -117,6 +117,7 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
                 if(lobList != null && !lobList.isEmpty()) {
+                    main_list.setVisibility(View.GONE);
                     mainPresenter.getTodaysActiveEmployees(lobList.get(position));
                 }
             }

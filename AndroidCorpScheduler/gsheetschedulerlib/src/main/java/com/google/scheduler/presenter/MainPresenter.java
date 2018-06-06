@@ -8,6 +8,7 @@ import com.google.scheduler.R;
 import com.google.scheduler.interfaces.MainInterface;
 import com.google.scheduler.rest.RestGetLobInGSheet;
 import com.google.scheduler.rest.RestGetTodaysActiveEmployeeInGSheet;
+import com.google.scheduler.view.DataModel;
 
 import java.util.ArrayList;
 
@@ -32,7 +33,7 @@ public class MainPresenter {
                 this.context,
                 new RestGetTodaysActiveEmployeeInGSheet.Listener() {
                     @Override
-                    public void result(ArrayList<String> employees) {
+                    public void result(ArrayList<DataModel> employees) {
                         listener.getEmployees(employees);
                     }
 

@@ -6,6 +6,7 @@ import android.util.Log;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import com.google.scheduler.util.Util;
+import com.google.scheduler.view.DataModel;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -131,14 +132,14 @@ public class RestGetTodaysActiveEmployeeInGSheet extends BaseGSheetAsyncTask {
         return listOfRowsThatIsOnDuty;
     }
 
-    private ArrayList<String> translateToEmployeeNames(List<List<Object>> values){
-        ArrayList<String>  employeeList = new ArrayList<>();
+    private ArrayList<DataModel> translateToEmployeeNames(List<List<Object>> values){
+        ArrayList<DataModel>  employeeList = new ArrayList<>();
 
         for(List<Object> employeeArr: values){
 
                 if(!employeeArr.isEmpty() && employeeArr.size() >= 4 &&
                         ((String)employeeArr.get(1)).equalsIgnoreCase(lob)) {
-                    employeeList.add((String) employeeArr.get(4));
+                    employeeList.add(new DataModel(((String)employeeArr.get(4)),((String)employeeArr.get(1)),((String)employeeArr.get(3)),((String)employeeArr.get(employeeArr.size()-1))));
                 }
 
         }
@@ -149,6 +150,6 @@ public class RestGetTodaysActiveEmployeeInGSheet extends BaseGSheetAsyncTask {
 
 
     public interface Listener extends BaseGSheetListener {
-        void result(ArrayList<String> employees);
+        void result(ArrayList<DataModel> employees);
     }
 }

@@ -4,6 +4,8 @@ import android.app.Application;
 
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 /**
  * Created by cicciolina on 6/6/18.
  */
@@ -13,6 +15,13 @@ public class MainApplication extends Application {
     private static String email;
     private static GoogleAccountCredential mCredential;
     private static String oAuthIdToken;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        JodaTimeAndroid.init(this);
+
+    }
 
     public static String getEmail() {
         return email;

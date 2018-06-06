@@ -9,14 +9,14 @@ import android.widget.TextView;
 
 import com.google.scheduler.R;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by kfugaban on 6/6/18.
  */
 
 public class MainListAdapter extends ArrayAdapter<DataModel> {
-    private ArrayList<DataModel> dataSet;
+    private List<DataModel> dataSet;
     Context mContext;
 
     private static class ViewHolder {
@@ -26,7 +26,7 @@ public class MainListAdapter extends ArrayAdapter<DataModel> {
         TextView txt_time;
     }
 
-    public MainListAdapter(ArrayList<DataModel> data, Context context) {
+    public MainListAdapter(List<DataModel> data, Context context) {
         super(context, R.layout.custom_list_row, data);
         this.dataSet = data;
         this.mContext=context;

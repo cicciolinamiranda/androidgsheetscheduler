@@ -2,6 +2,8 @@ package com.google.scheduler.interfaces;
 
 import android.content.Intent;
 
+import com.google.scheduler.view.DataModel;
+
 import java.util.List;
 
 /**
@@ -10,7 +12,7 @@ import java.util.List;
 
 public interface MainInterface {
 
-    void getEmployees(List<String> employees);
+    void getEmployees(List<DataModel> employees);
     void getLobsResponse(List<String> lobList);
     void requestForAuthorization(Intent intent);
     void userNotPermitted();
