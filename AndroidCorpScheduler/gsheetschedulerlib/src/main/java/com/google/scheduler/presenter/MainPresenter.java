@@ -5,6 +5,7 @@ import android.content.Intent;
 
 import com.google.scheduler.MainApplication;
 import com.google.scheduler.R;
+import com.google.scheduler.enums.ShiftRange;
 import com.google.scheduler.interfaces.MainInterface;
 import com.google.scheduler.rest.RestGetLobInGSheet;
 import com.google.scheduler.rest.RestGetTodaysActiveEmployeeInGSheet;
@@ -26,30 +27,32 @@ public class MainPresenter {
         this.context = context;
     }
 
-    public void getTodaysActiveEmployees(String lob) {
+    public void getTodaysActiveEmployees(String lob, ShiftRange shiftRange) {
 
-        RestGetTodaysActiveEmployeeInGSheet restGetTodaysActiveEmployeeInGSheet = new RestGetTodaysActiveEmployeeInGSheet(
-                ((MainApplication)this.context.getApplicationContext()).getmCredential(),
-                this.context,
-                new RestGetTodaysActiveEmployeeInGSheet.Listener() {
-                    @Override
-                    public void result(ArrayList<DataModel> employees) {
-                        listener.getEmployees(employees);
-                    }
+        if(shiftRange != null) {
+            RestGetTodaysActiveEmployeeInGSheet restGetTodaysActiveEmployeeInGSheet = new RestGetTodaysActiveEmployeeInGSheet(
+                    ((MainApplication) this.context.getApplicationContext()).getmCredential(),
+                    this.context,
+                    new RestGetTodaysActiveEmployeeInGSheet.Listener() {
+                        @Override
+                        public void result(ArrayList<DataModel> employees) {
+                            listener.getEmployees(employees);
+                        }
 
-                    @Override
-                    public void requestForAuthorization(Intent intent) {
-                        listener.requestForAuthorization(intent);
-                    }
+                        @Override
+                        public void requestForAuthorization(Intent intent) {
+                            listener.requestForAuthorization(intent);
+                        }
 
-                    @Override
-                    public void userNotPermitted() {
-                        listener.userNotPermitted();
-                    }
-                }, context.getString(R.string.spreadsheet_id),
-                context.getString(R.string.sheet_name), lob.toUpperCase());
+                        @Override
+                        public void userNotPermitted() {
+                            listener.userNotPermitted();
+                        }
+                    }, context.getString(R.string.spreadsheet_id),
+                    context.getString(R.string.sheet_name), lob.toUpperCase(), shiftRange);
 
-        restGetTodaysActiveEmployeeInGSheet.execute();
+            restGetTodaysActiveEmployeeInGSheet.execute();
+        }
     }
 
     public void getLobList() {

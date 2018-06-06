@@ -147,7 +147,7 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
                 if(lobList != null && !lobList.isEmpty()) {
                     main_list.setVisibility(View.GONE);
-                    mainPresenter.getTodaysActiveEmployees(lobList.get(position));
+                    mainPresenter.getTodaysActiveEmployees(lobList.get(position), getShiftRange());
                 }
             }
 
