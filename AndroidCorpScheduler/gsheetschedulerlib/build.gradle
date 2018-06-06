@@ -5,6 +5,10 @@ buildscript {
     repositories {
         jcenter()
     }
+
+    dependencies {
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
+    }
 }
 
 android {
@@ -76,11 +80,21 @@ android {
         exclude 'META-INF/LICENSE.txt'
 
     }
+
+    configurations.all {
+        resolutionStrategy.force 'com.google.code.findbugs:jsr305:1.3.9'
+    }
 }
 
 repositories {
 
     mavenCentral()
+
+    maven {
+        url "http://dl.bintray.com/lukaville/maven"
+    }
+
+    maven { url "https://jitpack.io" }
 }
 
 dependencies {
@@ -88,6 +102,33 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:26.+'
+
+    compile 'com.android.support:appcompat-v7:26.0.2'
+    compile 'com.android.support:design:26.0.2'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+
     testCompile 'junit:junit:4.12'
+
+    compile('com.google.android.gms:play-services:10.2.1') {
+        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+        exclude group: 'org.json', module: 'json'
+    }
+
+    compile('com.google.apis:google-api-services-sheets:v4-rev485-1.23.0') {
+        exclude group: 'org.apache.httpcomponents'
+    }
+
+    compile('com.google.api-client:google-api-client-android:1.17.0-rc') {
+        exclude module: 'httpclient'
+    }
+
+    compile 'com.google.http-client:google-http-client-gson:1.19.0' exclude module: 'httpclient'
+
+    compile('com.android.support:support-v4:25.0.1') {
+        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+    }
+
+    compile 'com.google.apis:google-api-services-drive:v3-rev85-1.23.0'
+    compile 'pub.devrel:easypermissions:0.3.0'
+
 }
