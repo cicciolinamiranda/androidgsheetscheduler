@@ -7,10 +7,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.telephony.TelephonyManager;
 import android.widget.Toast;
+
+import com.google.scheduler.enums.NetworkTypes;
 
 import static com.google.scheduler.constants.AppConstants.REQUEST_PERMISSIONS;
 
@@ -87,5 +92,51 @@ public class Util {
             // do something for phones running an SDK before lollipop
             Toast.makeText(context,message,Toast.LENGTH_LONG).show();
         }
+    }
+
+
+    public static NetworkTypes getNetwork(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = cm.getActiveNetworkInfo();
+
+        if (info == null || !info.isConnected())
+            return NetworkTypes.NO_CONNECTION;
+
+        if (info.getType() == ConnectivityManager.TYPE_WIFI)
+            return NetworkTypes.WIFI;
+
+        if (info.getType() == ConnectivityManager.TYPE_MOBILE) {
+            int networkType = info.getSubtype();
+            switch (networkType) {
+                case TelephonyManager.NETWORK_TYPE_GPRS:
+                case TelephonyManager.NETWORK_TYPE_EDGE:
+                case TelephonyManager.NETWORK_TYPE_CDMA:
+                case TelephonyManager.NETWORK_TYPE_1xRTT:
+                case TelephonyManager.NETWORK_TYPE_IDEN: // all above for 2G
+
+                case TelephonyManager.NETWORK_TYPE_UMTS:
+                case TelephonyManager.NETWORK_TYPE_EVDO_0:
+                case TelephonyManager.NETWORK_TYPE_EVDO_A:
+                case TelephonyManager.NETWORK_TYPE_HSDPA:
+                case TelephonyManager.NETWORK_TYPE_HSUPA:
+                case TelephonyManager.NETWORK_TYPE_HSPA:
+                case TelephonyManager.NETWORK_TYPE_EVDO_B:
+                case TelephonyManager.NETWORK_TYPE_EHRPD:
+                case TelephonyManager.NETWORK_TYPE_HSPAP: // all above for 3G
+
+                case TelephonyManager.NETWORK_TYPE_LTE:   // 4G
+                    return NetworkTypes.MOBILE_NETWORK;
+                default:
+                    return NetworkTypes.UNKNOWN;
+            }
+        }
+        return NetworkTypes.UNKNOWN;
+
+  /*  boolean wifi = isWifiConnected(context);
+    boolean mobile = isMobileConnected(context);
+
+    if(wifi) return NetWorkTypes.WIFI;
+    if(mobile) return  NetWorkTypes.MOBILE_NETWORK;
+    return NetWorkTypes.UNKNOWN;*/
     }
 }

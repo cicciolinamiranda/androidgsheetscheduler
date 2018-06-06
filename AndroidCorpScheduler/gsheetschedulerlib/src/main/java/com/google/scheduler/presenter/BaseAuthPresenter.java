@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.StrictMode;
 import android.support.v4.app.FragmentActivity;
@@ -15,6 +16,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -25,12 +30,20 @@ import com.google.api.services.drive.DriveScopes;
 import com.google.scheduler.MainApplication;
 import com.google.scheduler.R;
 import com.google.scheduler.util.Util;
+import com.google.scheduler.view.LoginActivity;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
+import static android.support.v4.content.PermissionChecker.PERMISSION_DENIED;
+import static com.google.scheduler.constants.AppConstants.RC_GET_TOKEN;
 import static com.google.scheduler.constants.AppConstants.REQUEST_GOOGLE_PLAY_SERVICES;
+import static com.google.scheduler.constants.AppConstants.REQUEST_PERMISSIONS;
 import static com.google.scheduler.constants.AppConstants.REQUEST_PERMISSION_GET_ACCOUNTS;
 
 /**
@@ -137,9 +150,9 @@ public class BaseAuthPresenter {
                 mContext.getApplicationContext(), Arrays.asList(SCOPES))
                 .setBackOff(new ExponentialBackOff());
 
-        if(((MainApplication)mContext).getEmail() != null &&
-                !((MainApplication)mContext).getEmail().isEmpty()) {
-            setGoogleCredentialAccount(((MainApplication)mContext).getEmail());
+        if(((MainApplication)mContext.getApplicationContext()).getEmail() != null &&
+                !((MainApplication)mContext.getApplicationContext()).getEmail().isEmpty()) {
+            setGoogleCredentialAccount(((MainApplication)mContext.getApplicationContext()).getEmail());
         }
 
         if(!isGooglePlayServicesAvailable()) {
@@ -147,10 +160,96 @@ public class BaseAuthPresenter {
         }
     }
 
+
+    public void verifyToken() {
+
+        if(mGoogleApiClient != null && mGoogleApiClient.isConnected() &&
+                ((MainApplication)mContext.getApplicationContext()).getoAuthIdToken() != null &&
+                ((MainApplication)mContext.getApplicationContext()).getoAuthIdToken().isEmpty()) {
+            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
+                    .setAudience(Collections.singletonList(mContext.getString(R.string.server_client_id)))
+                    .build();
+
+            GoogleIdToken idToken = null;
+
+            try {
+                idToken = verifier.verify(((MainApplication)mContext.getApplicationContext()).getoAuthIdToken());
+                if (idToken != null) {
+                    GoogleIdToken.Payload payload = idToken.getPayload();
+
+                    //Get token expiration date
+                    Log.d(BaseAuthPresenter.class.getName(), "token code exp:" + payload.getExpirationTimeSeconds());
+
+                    // validate timestamps
+                    long timestampNow = (new Date()).getTime();
+                    long timestampIssued = payload.getIssuedAtTimeSeconds() * 1000;
+                    long timestampExpired = payload.getExpirationTimeSeconds() * 1000;
+                    if (timestampIssued > timestampNow || timestampExpired < timestampNow) {
+                        //token is expired.signout to get new token
+                        Util.getInstance().showSnackBarToast(mContext, mContext.getString(R.string.session_is_expired));
+                        signOut();
+                    }
+
+                } else {
+                    Util.getInstance().showSnackBarToast(mContext, mContext.getString(R.string.session_is_expired));
+                    signOut();
+                }
+
+            } catch (GeneralSecurityException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+    }
+
+    public void onStart() {
+        if(mGoogleApiClient != null) mGoogleApiClient.connect();
+    }
+
+    public void onDestroy() {
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.disconnect();
+        }
+    }
+
+    public void signOut() {
+
+        if(mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                    new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(Status status) {
+                            Log.d(BaseAuthPresenter.class.getName(), "signOut:onResult:" + status);
+                            Intent mainIntent = new Intent(mContext, LoginActivity.class);
+                            mActivity.startActivityForResult(mainIntent, 0);
+                            mActivity.finish();
+                        }
+                    });
+        }
+    }
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        if (requestCode == REQUEST_PERMISSIONS) {
+            boolean callForRecheckPermissions = false;
+            for (int i = 0; i < permissions.length; i++) {
+                if (grantResults[i] == PERMISSION_DENIED) {
+                    callForRecheckPermissions = true;
+                }
+            }
+            if (callForRecheckPermissions) {
+                checkPermissions();
+            } else {
+                initGoogleCredential();
+            }
+        }
+    }
     public void setGoogleCredentialAccount(String email) {
         if(isGooglePlayServicesAvailable() && mCredential != null && email != null && !email.isEmpty()) {
             mCredential.setSelectedAccountName(email);
-            ((MainApplication)mContext).setmCredential(mCredential);
+            ((MainApplication)mContext.getApplicationContext()).setmCredential(mCredential);
         } else {
             acquireGooglePlayServices();
         }
@@ -197,5 +296,21 @@ public class BaseAuthPresenter {
                 connectionStatusCode,
                 REQUEST_GOOGLE_PLAY_SERVICES);
         dialog.show();
+    }
+
+    public GoogleApiClient getmGoogleApiClient() {
+        return mGoogleApiClient;
+    }
+
+    public void signInWithGplus() {
+        // Show an account picker to let the user choose a Google account from the device.
+        // If the GoogleSignInOptions only asks for IDToken and/or profile and/or email then no
+        // consent screen will be shown here.
+        if(mGoogleApiClient != null) {
+            Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+            mActivity.startActivityForResult(signInIntent, RC_GET_TOKEN);
+        }else {
+            Util.getInstance().showSnackBarToast(mContext, mContext.getResources().getString(R.string.error_sign_in));
+        }
     }
 }

@@ -12,6 +12,7 @@ public class MainApplication extends Application {
 
     private static String email;
     private static GoogleAccountCredential mCredential;
+    private static String oAuthIdToken;
 
     public static String getEmail() {
         return email;
@@ -27,5 +28,13 @@ public class MainApplication extends Application {
 
     public static void setmCredential(GoogleAccountCredential mCredential) {
         MainApplication.mCredential = mCredential;
+    }
+
+    public static String getoAuthIdToken() {
+        return oAuthIdToken;
+    }
+
+    public static void setoAuthIdToken(String oAuthIdToken) {
+        MainApplication.oAuthIdToken = oAuthIdToken;
     }
 }
