@@ -106,7 +106,29 @@ public class Util {
                         "AA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","AW","AX","AY","AZ",
                         "BA","BB","BC","BD","BE","BF","BG", "BH","BI", "BJ", "BK","BL","BM","BN","BO","BP", "BQ","BR","BS","BT", "BU","BV","BW","BX","BY","BZ",
                         "CA","CB","CC","CD","CE","CF","CG", "CH","CI", "CJ", "CK","CL","CM","CN","CO","CP", "CQ","CR","CS","CT", "CU","CV","CW","CX","CY","CZ",
-                        "DA","DB","DC","DD","DE","DF","DG", "DH","DI", "DJ", "DK","DL","DM","DN","DO","DP", "DQ","DR","DS","DT", "DU","DV","DW","DX","DY","DZ"));
+                        "DA","DB","DC","DD","DE","DF","DG", "DH","DI", "DJ", "DK","DL","DM","DN","DO","DP", "DQ","DR","DS","DT", "DU","DV","DW","DX","DY","DZ",
+                        "EA","EB","EC","ED","EE","EF","EG", "EH","EI", "EJ", "EK","EL","EM","EN","EO","EP", "EQ","ER","ES","ET", "EU","EV","EW","EX","EY","EZ",
+                        "FA","FB","FC","FD","FE","FF","FG", "FH","FI", "FJ", "FK","FL","FM","FN","FO","FP", "FQ","FR","FS","FT", "FU","FV","FW","FX","FY","FZ",
+                        "GA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","GW","GX","GY","GZ",
+                        "HA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","HW","HX","HY","HZ",
+                        "IA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","IW","IX","IY","IZ",
+                        "JA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","JW","JX","JY","JZ",
+                        "KA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","KW","KX","KY","KZ",
+                        "LA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","LW","LX","LY","LZ",
+                        "MA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","MW","MX","MY","MZ",
+                        "NA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","AW","NX","NY","NZ",
+                        "OA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","AW","OX","OY","OZ",
+                        "PA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","AW","PX","PY","PZ",
+                        "QA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","AW","QX","QY","QZ",
+                        "RA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","AW","RX","RY","RZ",
+                        "SA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","AW","SX","SY","SZ",
+                        "TA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","AW","TX","TY","TZ",
+                        "UA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","AW","UX","UY","UZ",
+                        "VA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","AW","VX","VY","VZ",
+                        "WA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","AW","WX","WY","WZ",
+                        "XA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","AW","XX","XY","XZ",
+                        "YA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","AW","YX","YY","YZ",
+                        "ZA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","AW","ZX","ZY","ZZ"));
 
         if(colNum <= columnDateHeaderLetters.size()) {
             columnLetter = columnDateHeaderLetters.get(colNum);

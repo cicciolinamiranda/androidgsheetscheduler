@@ -14,4 +14,17 @@
     <string name="spreadsheet_id">1Q_Dc-fLg0-9AX4vx_mbm8AshMwhfFS5pavCvHnQD9LM</string>
     <string name="error_user_unauthorized_in_gsheet">User not authorized in gsheet id</string>
 
+    <string name="spinner_prompt">- SELECT -</string>
+
+    <string-array name="spinner_arrays">
+        <item>item 1</item>
+        <item>item 2</item>
+        <item>item 3</item>
+        <item>item 4</item>
+        <item>item 5</item>
+        <item>item 6</item>
+        <item>item 7</item>
+        <item>item 8</item>
+    </string-array>
+
 </resources>
