@@ -10,11 +10,15 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.scheduler.R;
+import com.google.scheduler.enums.ShiftRange;
 import com.google.scheduler.interfaces.MainInterface;
 import com.google.scheduler.presenter.MainPresenter;
+
+import org.joda.time.DateTime;
 
 import java.util.List;
 
@@ -23,11 +27,11 @@ import static com.google.scheduler.constants.AppConstants.REQUEST_PERMISSIONS;
 public class MainActivity extends BaseAuthActivity implements MainInterface {
 
 
-//    private ArrayList<DataModel> dataModels;
     private ListView main_list;
     private MainListAdapter adapter;
     private Spinner spinner;
     private MainPresenter mainPresenter;
+    private TextView tvShiftRange;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,18 +40,43 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
 
         mainPresenter = new MainPresenter(this, this);
         mainPresenter.getLobList();
+        tvShiftRange = findViewById(R.id.tv_shift_range);
         main_list = findViewById(R.id.main_list);
         main_list.setVisibility(View.GONE);
 
         spinner = findViewById(R.id.spinner);
 
+        tvShiftRange.setText(getShiftRange().getLabel());
 
     }
 
     private void refreshData() {
 
         main_list.setVisibility(View.GONE);
+
+        tvShiftRange.setText(getShiftRange().getLabel());
         mainPresenter.getLobList();
+    }
+
+    private ShiftRange getShiftRange () {
+        DateTime currentDateTime = new DateTime(System.currentTimeMillis());
+
+        if((currentDateTime.isEqual(ShiftRange.SIXAM_TO_THREEPM.getStartTime()) || currentDateTime.isAfter(ShiftRange.SIXAM_TO_THREEPM.getStartTime())) &&
+                (currentDateTime.isEqual(ShiftRange.SIXAM_TO_THREEPM.getEndTime()) || currentDateTime.isBefore(ShiftRange.SIXAM_TO_THREEPM.getEndTime()))) {
+            return ShiftRange.SIXAM_TO_THREEPM;
+        }
+
+        else if((currentDateTime.isEqual(ShiftRange.TWOPM_TO_ELEVENPM.getStartTime()) || currentDateTime.isAfter(ShiftRange.TWOPM_TO_ELEVENPM.getStartTime())) &&
+                (currentDateTime.isEqual(ShiftRange.TWOPM_TO_ELEVENPM.getEndTime()) || currentDateTime.isBefore(ShiftRange.TWOPM_TO_ELEVENPM.getEndTime()))) {
+            return ShiftRange.TWOPM_TO_ELEVENPM;
+        }
+
+        else if((currentDateTime.isEqual(ShiftRange.TENPM_TO_SEVENAM.getStartTime()) || currentDateTime.isAfter(ShiftRange.TENPM_TO_SEVENAM.getStartTime())) &&
+                (currentDateTime.isEqual(ShiftRange.TENPM_TO_SEVENAM.getEndTime()) || currentDateTime.isBefore(ShiftRange.TENPM_TO_SEVENAM.getEndTime()))) {
+            return ShiftRange.TENPM_TO_SEVENAM;
+        }
+
+        return null;
     }
 
     @Override
