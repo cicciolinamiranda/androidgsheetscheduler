@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class RestGetTodaysActiveEmployeeInGSheet extends BaseGSheetAsyncTask {
 
     private RestGetTodaysActiveEmployeeInGSheet.Listener listener;
-    private final static String DATE_HEADER_RANGE = "F1:ZZZ1";
+    private final static String DATE_HEADER_RANGE = "F1:ZZ1";
     private final static String WHOLE_WITHOUT_HEADERS_DATA_RANGE = "A2:";
     private String lob;
 

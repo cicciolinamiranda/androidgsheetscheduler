@@ -3,17 +3,22 @@ package com.google.scheduler.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.scheduler.R;
 import com.google.scheduler.interfaces.MainInterface;
 import com.google.scheduler.presenter.MainPresenter;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.google.scheduler.constants.AppConstants.REQUEST_PERMISSIONS;
 
@@ -25,7 +30,6 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
     private MainListAdapter adapter;
     private Spinner spinner;
     private MainPresenter mainPresenter;
-    private String lob;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,19 +41,8 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
         main_list = findViewById(R.id.main_list);
         dataModels= new ArrayList<>();
 
-        String[] arr = new String[]{
-                "item 1",
-                "item 2",
-                "item 3",
-                "item 4",
-                "item 5"
-        };
 
         spinner = findViewById(R.id.spinner);
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
-                this,R.layout.spinner_text,arr);
-        spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_text);
-        spinner.setAdapter(spinnerArrayAdapter);
 
         dataModels.add(new DataModel("Kevin Fugaban", "Developer", "Corp","22:00"));
         dataModels.add(new DataModel("Cicciolina Magdangal", "Developer", "Corp","22:00"));
@@ -91,13 +84,49 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
     }
 
     @Override
-    public void getLobsResponse(List<String> lobList) {
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        MenuInflater mi = getMenuInflater();
+        refreshMenu.setVisible(true);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        super.onOptionsItemSelected(item);
+        int id = item.getItemId();
+
+        if (id == R.id.menu_main_refresh) {
+            refreshData();
+        }
+        return true;
+    }
+
+
+
+    @Override
+    public void getLobsResponse(final List<String> lobList) {
         Log.d(MainActivity.class.getName(), lobList.toString());
 
-        if(lobList != null && !lobList.isEmpty()) {
-            lob = lobList.get(0);
-            mainPresenter.getTodaysActiveEmployees(lob);
-        }
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(
+                this,R.layout.spinner_text,lobList);
+        spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_text);
+        spinner.setAdapter(spinnerArrayAdapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                if(lobList != null && !lobList.isEmpty()) {
+                    mainPresenter.getTodaysActiveEmployees(lobList.get(position));
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
     }
 
     @Override

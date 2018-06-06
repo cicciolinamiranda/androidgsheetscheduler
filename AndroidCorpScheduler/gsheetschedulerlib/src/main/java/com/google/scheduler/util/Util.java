@@ -13,6 +13,7 @@ import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.scheduler.enums.NetworkTypes;
@@ -109,27 +110,28 @@ public class Util {
                         "DA","DB","DC","DD","DE","DF","DG", "DH","DI", "DJ", "DK","DL","DM","DN","DO","DP", "DQ","DR","DS","DT", "DU","DV","DW","DX","DY","DZ",
                         "EA","EB","EC","ED","EE","EF","EG", "EH","EI", "EJ", "EK","EL","EM","EN","EO","EP", "EQ","ER","ES","ET", "EU","EV","EW","EX","EY","EZ",
                         "FA","FB","FC","FD","FE","FF","FG", "FH","FI", "FJ", "FK","FL","FM","FN","FO","FP", "FQ","FR","FS","FT", "FU","FV","FW","FX","FY","FZ",
-                        "GA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","GW","GX","GY","GZ",
-                        "HA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","HW","HX","HY","HZ",
-                        "IA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","IW","IX","IY","IZ",
-                        "JA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","JW","JX","JY","JZ",
-                        "KA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","KW","KX","KY","KZ",
-                        "LA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","LW","LX","LY","LZ",
-                        "MA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","MW","MX","MY","MZ",
-                        "NA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","AW","NX","NY","NZ",
-                        "OA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","AW","OX","OY","OZ",
-                        "PA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","AW","PX","PY","PZ",
-                        "QA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","AW","QX","QY","QZ",
-                        "RA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","AW","RX","RY","RZ",
-                        "SA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","AW","SX","SY","SZ",
-                        "TA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","AW","TX","TY","TZ",
-                        "UA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","AW","UX","UY","UZ",
-                        "VA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","AW","VX","VY","VZ",
-                        "WA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","AW","WX","WY","WZ",
-                        "XA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","AW","XX","XY","XZ",
-                        "YA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","AW","YX","YY","YZ",
-                        "ZA","AB","AC","AD","AE","AF","AG", "AH","AI", "AJ", "AK","AL","AM","AN","AO","AP", "AQ","AR","AS","AT", "AU","AV","AW","ZX","ZY","ZZ"));
+                        "GA","GB","GC","GD","GE","GF","GG", "GH","GI", "GJ", "GK","GL","GM","GN","GO","GP", "GQ","GR","GS","GT", "GU","GV","GW","GX","GY","GZ",
+                        "HA","HB","HC","HD","HE","HF","HG", "HH","HI", "HJ", "HK","HL","HM","HN","HO","HP", "HQ","HR","HS","HT", "HU","HV","HW","HX","HY","HZ",
+                        "IA","IB","IC","ID","IE","IF","IG", "IH","II", "IJ", "IK","IL","IM","IN","IO","IP", "IQ","IR","IS","IT", "IU","IV","IW","IX","IY","IZ",
+                        "JA","JB","JC","JD","JE","JF","JG", "JH","JI", "JJ", "JK","JL","JM","JN","JO","JP", "JQ","JR","JS","JT", "JU","JV","JW","JX","JY","JZ",
+                        "KA","KB","KC","KD","KE","KF","KG", "KH","KI", "KJ", "KK","KL","KM","KN","KO","KP", "KQ","KR","KS","KT", "KU","KV","KW","KX","KY","KZ",
+                        "LA","LB","LC","LD","LE","LF","LG", "LH","LI", "LJ", "LK","LL","LM","LN","LO","LP", "LQ","LR","LS","LT", "LU","LV","LW","LX","LY","LZ",
+                        "MA","MB","MC","MD","ME","MF","MG", "MH","MI", "MJ", "MK","ML","MM","MN","MO","MP", "MQ","MR","MS","MT", "MU","MV","MW","MX","MY","MZ",
+                        "NA","NB","NC","ND","NE","NF","NG", "NH","NI", "NJ", "NK","NL","NM","NN","NO","NP", "NQ","NR","NS","NT", "NU","NV","AW","NX","NY","NZ",
+                        "OA","OB","OC","OD","OE","OF","OG", "OH","OI", "OJ", "OK","OL","OM","ON","OO","OP", "OQ","OR","OS","OT", "OU","OV","AW","OX","OY","OZ",
+                        "PA","PB","PC","PD","PE","PF","PG", "PH","PI", "PJ", "PK","PL","PM","PN","PO","PP", "PQ","PR","PS","PT", "PU","PV","AW","PX","PY","PZ",
+                        "QA","QB","QC","QD","QE","QF","QG", "QH","QI", "QJ", "QK","QL","QM","QN","QO","QP", "QQ","QR","QS","QT", "QU","QV","AW","QX","QY","QZ",
+                        "RA","RB","RC","RD","RE","RF","RG", "RH","RI", "RJ", "RK","RL","RM","RN","RO","RP", "RQ","RR","RS","RT", "RU","RV","AW","RX","RY","RZ",
+                        "SA","SB","SC","SD","SE","SF","SG", "SH","SI", "SJ", "SK","SL","SM","SN","SO","SP", "SQ","SR","SS","ST", "SU","SV","AW","SX","SY","SZ",
+                        "TA","TB","TC","TD","TE","TF","TG", "TH","TI", "TJ", "TK","TL","TM","TN","TO","TP", "TQ","TR","TS","TT", "TU","TV","AW","TX","TY","TZ",
+                        "UA","UB","UC","UD","UE","UF","UG", "UH","UI", "UJ", "UK","UL","UM","UN","UO","UP", "UQ","UR","US","UT", "UU","UV","AW","UX","UY","UZ",
+                        "VA","VB","VC","VD","VE","VF","VG", "VH","VI", "VJ", "VK","VL","VM","VN","VO","VP", "VQ","VR","VS","VT", "VU","VV","AW","VX","VY","VZ",
+                        "WA","WB","WC","WD","WE","WF","WG", "WH","WI", "WJ", "WK","WL","WM","WN","QO","WP", "WQ","WR","WS","WT", "WU","WV","AW","WX","WY","WZ",
+                        "XA","XB","XC","XD","XE","XF","XG", "XH","XI", "XJ", "XK","XL","XM","XN","XO","XP", "XQ","XR","XS","XT", "XU","XV","AW","XX","XY","XZ",
+                        "YA","YB","YC","YD","YE","YF","YG", "YH","YI", "YJ", "YK","YL","YM","YN","YO","YP", "YQ","YR","YS","YT", "YU","YV","AW","YX","YY","YZ",
+                        "ZA","ZB","ZC","ZD","ZE","ZF","ZG", "ZH","ZI", "ZJ", "ZK","ZL","ZM","ZN","ZO","ZP", "ZQ","ZR","ZS","ZT", "ZU","ZV","AW","ZX","ZY","ZZ"));
 
+        Log.d(Util.class.getName(), "columnDateHeaderLetters.size(): "+columnDateHeaderLetters.size());
         if(colNum <= columnDateHeaderLetters.size()) {
             columnLetter = columnDateHeaderLetters.get(colNum);
         }
