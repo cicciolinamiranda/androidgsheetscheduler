@@ -37,32 +37,6 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
         main_list = findViewById(R.id.main_list);
         dataModels= new ArrayList<>();
 
-
-    }
-
-    private void refreshData() {
-        mainPresenter.getLobList();
-    }
-        dataModels.add(new DataModel("Kevin Fugaban", "Developer", "Corp","22:00"));
-        dataModels.add(new DataModel("Cicciolina Magdangal", "Developer", "Corp","22:00"));
-        dataModels.add(new DataModel("Miani Agbayani", "Developer", "Corp","22:00"));
-
-        adapter = new MainListAdapter(dataModels, MainActivity.this);
-        main_list.setAdapter(adapter);
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == REQUEST_PERMISSIONS) {
-            boolean callForRecheckPermissions = false;
-            if (!callForRecheckPermissions) {
-                refreshData();
-            }
-        }
-    }
-
-    @Override
         String[] arr = new String[]{
                 "item 1",
                 "item 2",
@@ -76,6 +50,32 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
                 this,R.layout.spinner_text,arr);
         spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_text);
         spinner.setAdapter(spinnerArrayAdapter);
+
+        dataModels.add(new DataModel("Kevin Fugaban", "Developer", "Corp","22:00"));
+        dataModels.add(new DataModel("Cicciolina Magdangal", "Developer", "Corp","22:00"));
+        dataModels.add(new DataModel("Miani Agbayani", "Developer", "Corp","22:00"));
+
+        adapter = new MainListAdapter(dataModels, MainActivity.this);
+        main_list.setAdapter(adapter);
+
+    }
+
+    private void refreshData() {
+        mainPresenter.getLobList();
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_PERMISSIONS) {
+            boolean callForRecheckPermissions = false;
+            if (!callForRecheckPermissions) {
+                refreshData();
+            }
+        }
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
