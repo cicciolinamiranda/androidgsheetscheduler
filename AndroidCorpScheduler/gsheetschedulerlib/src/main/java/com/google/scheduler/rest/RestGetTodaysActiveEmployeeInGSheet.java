@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.google.scheduler.constants.AppConstants.PH_TIMEZONE;
+
 /**
  * Created by cicciolina on 6/6/18.
  */
@@ -169,7 +171,7 @@ public class RestGetTodaysActiveEmployeeInGSheet extends BaseGSheetAsyncTask {
             shiftCal.set(Calendar.MINUTE, 0);
             shiftCal.set(Calendar.SECOND, 0);
 
-            DateTime shiftDateTime = new DateTime(shiftCal).withZone(DateTimeZone.forID("Asia/Tokyo"));
+            DateTime shiftDateTime = new DateTime(shiftCal).withZone(DateTimeZone.forID(PH_TIMEZONE));
 
             if ((shiftDateTime.isEqual(shiftRange.getStartTime()) || shiftDateTime.isAfter(shiftRange.getStartTime())) &&
                     (shiftDateTime.isEqual(shiftRange.getEndTime()) || shiftDateTime.isBefore(shiftRange.getEndTime()))) {

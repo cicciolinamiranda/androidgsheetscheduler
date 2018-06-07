@@ -16,4 +16,6 @@ public class AppConstants {
     public static final int REQUEST_AUTHORIZATION = 0x96;
     public static final String[] SCOPES = { DriveScopes.DRIVE };
 
+    public static final String PH_TIMEZONE = "Asia/Singapore";
+
 }

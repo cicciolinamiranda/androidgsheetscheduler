@@ -19,9 +19,12 @@ import com.google.scheduler.interfaces.MainInterface;
 import com.google.scheduler.presenter.MainPresenter;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
+import java.util.Calendar;
 import java.util.List;
 
+import static com.google.scheduler.constants.AppConstants.PH_TIMEZONE;
 import static com.google.scheduler.constants.AppConstants.REQUEST_PERMISSIONS;
 
 public class MainActivity extends BaseAuthActivity implements MainInterface {
@@ -59,7 +62,7 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
     }
 
     private ShiftRange getShiftRange () {
-        DateTime currentDateTime = new DateTime(System.currentTimeMillis());
+        DateTime currentDateTime = new DateTime(Calendar.getInstance().getTime()).withZone(DateTimeZone.forID(PH_TIMEZONE));
 
         if((currentDateTime.isEqual(ShiftRange.SIXAM_TO_THREEPM.getStartTime()) || currentDateTime.isAfter(ShiftRange.SIXAM_TO_THREEPM.getStartTime())) &&
                 (currentDateTime.isEqual(ShiftRange.SIXAM_TO_THREEPM.getEndTime()) || currentDateTime.isBefore(ShiftRange.SIXAM_TO_THREEPM.getEndTime()))) {
