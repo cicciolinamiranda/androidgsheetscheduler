@@ -30,8 +30,10 @@ public enum ShiftRange {
 
     ShiftRange(String startTime, String endTime, String label) {
         DateTime currentDateTime = new DateTime(Calendar.getInstance().getTime()).withZone(DateTimeZone.forID(PH_TIMEZONE));
+        Log.d(ShiftRange.class.getName(), "currentDateTime: "+currentDateTime.toString());
 
         SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
+        sdf.setTimeZone(TimeZone.getTimeZone(PH_TIMEZONE));
 
         try {
             String formattedDate = sdf.format(currentDateTime.toDate());
@@ -39,17 +41,18 @@ public enum ShiftRange {
             Log.d(ShiftRange.class.getName(), "Format date: "+formattedDate);
 
             DateFormat sdf2 = new SimpleDateFormat("MM-dd-yyyy HH:mm");
+            sdf2.setTimeZone(TimeZone.getTimeZone(PH_TIMEZONE));
 
-            Log.d(ShiftRange.class.getName(), sdf2.parse(formattedDate+" "+startTime).toString());
-            Log.d(ShiftRange.class.getName(), sdf2.parse(formattedDate+" "+endTime).toString());
+            Log.d(ShiftRange.class.getName(), "Start time Format date: "+ sdf2.parse(formattedDate+" "+startTime).toString());
+            Log.d(ShiftRange.class.getName(),  "End time Format date: "+sdf2.parse(formattedDate+" "+endTime).toString());
 
             Calendar cal = Calendar.getInstance();
             TimeZone tz = cal.getTimeZone();
 
-            this.startTime = new DateTime(sdf2.parse(formattedDate+" "+startTime)).withZone(DateTimeZone.forTimeZone(tz));
-            this.endTime = new DateTime(sdf2.parse(formattedDate+" "+endTime)).withZone(DateTimeZone.forTimeZone(tz));
-            Log.d("START2", this.startTime.toString());
+            this.startTime = new DateTime(sdf2.parse(formattedDate+" "+startTime)).withZone(DateTimeZone.forTimeZone(sdf2.getTimeZone()));
+            this.endTime = new DateTime(sdf2.parse(formattedDate+" "+endTime)).withZone(DateTimeZone.forTimeZone(sdf2.getTimeZone()));
             Log.d(ShiftRange.class.getName(), this.startTime.toString());
+            Log.d(ShiftRange.class.getName(), this.endTime.toString());
         } catch (ParseException e) {
             e.printStackTrace();
         }

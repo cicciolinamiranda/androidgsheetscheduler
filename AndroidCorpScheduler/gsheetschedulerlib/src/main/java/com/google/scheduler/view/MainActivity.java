@@ -21,10 +21,12 @@ import com.google.scheduler.interfaces.MainInterface;
 import com.google.scheduler.presenter.MainPresenter;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 import java.util.Calendar;
 import java.util.List;
 
+import static com.google.scheduler.constants.AppConstants.PH_TIMEZONE;
 import static com.google.scheduler.constants.AppConstants.REQUEST_PERMISSIONS;
 
 public class MainActivity extends BaseAuthActivity implements MainInterface {
@@ -38,6 +40,8 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
     private ProgressBar loader_bar;
     private RelativeLayout emptyListMsgLayout;
     private List<String> lobList;
+
+    private boolean isUserNotPermittedAlreadyCalled;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,9 +97,13 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
     }
 
     private ShiftRange getShiftRange () {
-        DateTime currentDateTime = new DateTime(Calendar.getInstance().getTime());
+        DateTime currentDateTime = new DateTime(Calendar.getInstance().getTime()).withZone(DateTimeZone.forID(PH_TIMEZONE));
         Log.d("START", currentDateTime.toString());
 
+        Log.d(MainActivity.class.getName(), currentDateTime.toString());
+
+        Log.d(MainActivity.class.getName(), ShiftRange.TWELVEAM_TO_TWELVEPM.getStartTime().toString());
+        Log.d(MainActivity.class.getName(), ShiftRange.TWELVEAM_TO_TWELVEPM.getEndTime().toString());
         if((currentDateTime.isEqual(ShiftRange.TWELVEAM_TO_TWELVEPM.getStartTime()) || currentDateTime.isAfter(ShiftRange.TWELVEAM_TO_TWELVEPM.getStartTime())) &&
                 (currentDateTime.isEqual(ShiftRange.TWELVEAM_TO_TWELVEPM.getEndTime()) || currentDateTime.isBefore(ShiftRange.TWELVEAM_TO_TWELVEPM.getEndTime()))) {
             return ShiftRange.TWELVEAM_TO_TWELVEPM;
@@ -189,12 +197,16 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
 
     @Override
     public void userNotPermitted() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(MainActivity.this, getString(R.string.error_user_unauthorized_in_gsheet)+ getString(R.string.spreadsheet_id), Toast.LENGTH_SHORT).show();
-                logout();
-            }
-        });
+
+        if(!isUserNotPermittedAlreadyCalled) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(MainActivity.this, getString(R.string.error_user_unauthorized_in_gsheet) + getString(R.string.spreadsheet_id), Toast.LENGTH_SHORT).show();
+                    logout();
+                    isUserNotPermittedAlreadyCalled = true;
+                }
+            });
+        }
     }
 }

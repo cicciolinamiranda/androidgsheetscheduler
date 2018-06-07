@@ -8,6 +8,7 @@ import com.google.api.services.sheets.v4.model.ValueRange;
 import com.google.scheduler.enums.ShiftRange;
 import com.google.scheduler.util.Util;
 import com.google.scheduler.view.DataModel;
+import com.google.scheduler.view.MainActivity;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -170,6 +171,7 @@ public class RestGetTodaysActiveEmployeeInGSheet extends BaseGSheetAsyncTask {
         DateTime currentDateTime = new DateTime(Calendar.getInstance().getTime()).withZone(DateTimeZone.forID(PH_TIMEZONE));
 
         SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
+        sdf.setTimeZone(TimeZone.getTimeZone(PH_TIMEZONE));
 
         try {
             String formattedDate = sdf.format(currentDateTime.toDate());
@@ -177,14 +179,13 @@ public class RestGetTodaysActiveEmployeeInGSheet extends BaseGSheetAsyncTask {
             Log.d(ShiftRange.class.getName(), "Format date: "+formattedDate);
 
             DateFormat sdf2 = new SimpleDateFormat("MM-dd-yyyy HH:mm");
+            sdf2.setTimeZone(TimeZone.getTimeZone(PH_TIMEZONE));
 
             Log.d(ShiftRange.class.getName(), sdf2.parse(formattedDate+" "+time).toString());
 
-            Calendar cal = Calendar.getInstance();
-            TimeZone tz = cal.getTimeZone();
+            DateTime shiftDateTime = new DateTime(sdf2.parse(formattedDate+" "+time)).withZone(DateTimeZone.forTimeZone(sdf2.getTimeZone()));
 
-            DateTime shiftDateTime = new DateTime(sdf2.parse(formattedDate+" "+time)).withZone(DateTimeZone.forTimeZone(tz));
-
+            Log.d(MainActivity.class.getName(), shiftDateTime.toString());
 
             if ((shiftDateTime.isEqual(shiftRange.getStartTime()) || shiftDateTime.isAfter(shiftRange.getStartTime())) &&
                     (shiftDateTime.isEqual(shiftRange.getEndTime()) || shiftDateTime.isBefore(shiftRange.getEndTime()))) {
@@ -194,25 +195,6 @@ public class RestGetTodaysActiveEmployeeInGSheet extends BaseGSheetAsyncTask {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-//        String [] timeSplits = time.split(":");
-
-//        if(timeSplits.length >= 2) {
-//            Calendar shiftCal = Calendar.getInstance();
-//            shiftCal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeSplits[0]));
-//            shiftCal.set(Calendar.MINUTE, 0);
-//            shiftCal.set(Calendar.SECOND, 0);
-//
-//            DateTime shiftDateTime = new DateTime(shiftCal).withZone(DateTimeZone.forID(PH_TIMEZONE));
-//
-//            for(ShiftRange shiftRange: shiftRanges) {
-//
-//                if ((shiftDateTime.isEqual(shiftRange.getStartTime()) || shiftDateTime.isAfter(shiftRange.getStartTime())) &&
-//                        (shiftDateTime.isEqual(shiftRange.getEndTime()) || shiftDateTime.isBefore(shiftRange.getEndTime()))) {
-//                    return true;
-//                }
-//            }
-//
-//        }
 
         return false;
     }
