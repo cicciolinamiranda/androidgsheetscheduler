@@ -21,13 +21,11 @@ import com.google.scheduler.interfaces.MainInterface;
 import com.google.scheduler.presenter.MainPresenter;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import static com.google.scheduler.constants.AppConstants.PH_TIMEZONE;
 import static com.google.scheduler.constants.AppConstants.REQUEST_PERMISSIONS;
 
 public class MainActivity extends BaseAuthActivity implements MainInterface {
@@ -113,12 +111,12 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
 
         else if((currentDateTime.isEqual(ShiftRange.TWOPM_TO_ELEVENPM.getStartTime()) || currentDateTime.isAfter(ShiftRange.TWOPM_TO_ELEVENPM.getStartTime())) &&
                 (currentDateTime.isEqual(ShiftRange.TWOPM_TO_ELEVENPM.getEndTime()) || currentDateTime.isBefore(ShiftRange.TWOPM_TO_ELEVENPM.getEndTime()))) {
-            results.add(ShiftRange.SIXAM_TO_THREEPM);
+            results.add(ShiftRange.TWOPM_TO_ELEVENPM);
         }
 
         else if((currentDateTime.isEqual(ShiftRange.TENPM_TO_SEVENAM.getStartTime()) || currentDateTime.isAfter(ShiftRange.TENPM_TO_SEVENAM.getStartTime())) &&
                 (currentDateTime.isEqual(ShiftRange.TENPM_TO_SEVENAM.getEndTime()) || currentDateTime.isBefore(ShiftRange.TENPM_TO_SEVENAM.getEndTime()))) {
-            results.add(ShiftRange.SIXAM_TO_THREEPM);
+            results.add(ShiftRange.TENPM_TO_SEVENAM);
         }
 
         return results;
