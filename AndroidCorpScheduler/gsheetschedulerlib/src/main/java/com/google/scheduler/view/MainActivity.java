@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,6 +36,7 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
     private Spinner spinner;
     private MainPresenter mainPresenter;
     private TextView tvShiftRange;
+    private ProgressBar loader_bar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,7 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
         main_list.setVisibility(View.GONE);
 
         spinner = findViewById(R.id.spinner);
+        loader_bar = findViewById(R.id.loading_progress);
 
         tvShiftRange.setText(getShiftRange().getLabel());
 

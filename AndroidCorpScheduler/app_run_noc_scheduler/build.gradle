@@ -27,7 +27,7 @@ android {
     buildToolsVersion "27.0.3"
     defaultConfig {
         applicationId "com.google.scheduler.noc"
-        minSdkVersion 18
+        minSdkVersion 21
         targetSdkVersion 26
         versionCode 1
         versionName "noc_scheduler"
