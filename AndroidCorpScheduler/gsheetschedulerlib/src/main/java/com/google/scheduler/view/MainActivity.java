@@ -22,7 +22,6 @@ import com.google.scheduler.presenter.MainPresenter;
 
 import org.joda.time.DateTime;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -50,13 +49,14 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
         tvShiftRange = findViewById(R.id.tv_shift_range);
         main_list = findViewById(R.id.main_list);
         emptyListMsgLayout = findViewById(R.id.rl_empty_list_row);
+        emptyListMsgLayout.setVisibility(View.GONE);
         main_list.setVisibility(View.GONE);
 
         spinner = findViewById(R.id.spinner);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                if(lobList != null && !lobList.isEmpty() && getShiftRange() != null && !getShiftRange().isEmpty()) {
+                if(lobList != null && !lobList.isEmpty() && getShiftRange() != null) {
                     main_list.setVisibility(View.GONE);
                     loader_bar.setVisibility(View.VISIBLE);
                     mainPresenter.getTodaysActiveEmployees(lobList.get(position), getShiftRange());
@@ -86,40 +86,27 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
 
     private void setTimeRangeText() {
 
-        if(getShiftRange() != null && !getShiftRange().isEmpty()) {
-            StringBuilder range = new StringBuilder();
-            for(ShiftRange shiftRange: getShiftRange()) {
-                range.append(shiftRange.getLabel());
-                range.append("\n");
-            }
-
-            tvShiftRange.setText(range.toString());
-
+        if(getShiftRange() != null ) {
+            tvShiftRange.setText(getShiftRange().getLabel());
         }
 
     }
 
-    private List<ShiftRange> getShiftRange () {
+    private ShiftRange getShiftRange () {
         DateTime currentDateTime = new DateTime(Calendar.getInstance().getTime());
-        List<ShiftRange> results = new ArrayList<>();
         Log.d("START", currentDateTime.toString());
 
-        if((currentDateTime.isEqual(ShiftRange.SIXAM_TO_THREEPM.getStartTime()) || currentDateTime.isAfter(ShiftRange.SIXAM_TO_THREEPM.getStartTime())) &&
-                (currentDateTime.isEqual(ShiftRange.SIXAM_TO_THREEPM.getEndTime()) || currentDateTime.isBefore(ShiftRange.SIXAM_TO_THREEPM.getEndTime()))) {
-            results.add(ShiftRange.SIXAM_TO_THREEPM);
+        if((currentDateTime.isEqual(ShiftRange.TWELVEAM_TO_TWELVEPM.getStartTime()) || currentDateTime.isAfter(ShiftRange.TWELVEAM_TO_TWELVEPM.getStartTime())) &&
+                (currentDateTime.isEqual(ShiftRange.TWELVEAM_TO_TWELVEPM.getEndTime()) || currentDateTime.isBefore(ShiftRange.TWELVEAM_TO_TWELVEPM.getEndTime()))) {
+            return ShiftRange.TWELVEAM_TO_TWELVEPM;
         }
 
-        else if((currentDateTime.isEqual(ShiftRange.TWOPM_TO_ELEVENPM.getStartTime()) || currentDateTime.isAfter(ShiftRange.TWOPM_TO_ELEVENPM.getStartTime())) &&
-                (currentDateTime.isEqual(ShiftRange.TWOPM_TO_ELEVENPM.getEndTime()) || currentDateTime.isBefore(ShiftRange.TWOPM_TO_ELEVENPM.getEndTime()))) {
-            results.add(ShiftRange.TWOPM_TO_ELEVENPM);
+        else if((currentDateTime.isEqual(ShiftRange.TWELVEPM_TO_TWELVEAM.getStartTime()) || currentDateTime.isAfter(ShiftRange.TWELVEPM_TO_TWELVEAM.getStartTime())) &&
+                (currentDateTime.isEqual(ShiftRange.TWELVEPM_TO_TWELVEAM.getEndTime()) || currentDateTime.isBefore(ShiftRange.TWELVEPM_TO_TWELVEAM.getEndTime()))) {
+            return ShiftRange.TWELVEPM_TO_TWELVEAM;
         }
 
-        else if((currentDateTime.isEqual(ShiftRange.TENPM_TO_SEVENAM.getStartTime()) || currentDateTime.isAfter(ShiftRange.TENPM_TO_SEVENAM.getStartTime())) &&
-                (currentDateTime.isEqual(ShiftRange.TENPM_TO_SEVENAM.getEndTime()) || currentDateTime.isBefore(ShiftRange.TENPM_TO_SEVENAM.getEndTime()))) {
-            results.add(ShiftRange.TENPM_TO_SEVENAM);
-        }
-
-        return results;
+        return null;
     }
 
     @Override

@@ -12,7 +12,6 @@ import com.google.scheduler.rest.RestGetTodaysActiveEmployeeInGSheet;
 import com.google.scheduler.view.DataModel;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by cicciolina on 6/6/18.
@@ -28,7 +27,7 @@ public class MainPresenter {
         this.context = context;
     }
 
-    public void getTodaysActiveEmployees(String lob, List<ShiftRange> shiftRange) {
+    public void getTodaysActiveEmployees(String lob, ShiftRange shiftRange) {
 
         if(shiftRange != null) {
             RestGetTodaysActiveEmployeeInGSheet restGetTodaysActiveEmployeeInGSheet = new RestGetTodaysActiveEmployeeInGSheet(

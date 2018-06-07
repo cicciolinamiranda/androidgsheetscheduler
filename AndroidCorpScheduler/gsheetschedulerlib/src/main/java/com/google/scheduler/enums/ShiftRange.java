@@ -9,7 +9,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.TimeZone;
 
 import static com.google.scheduler.constants.AppConstants.PH_TIMEZONE;
@@ -21,9 +20,8 @@ import static com.google.scheduler.constants.AppConstants.PH_TIMEZONE;
 
 public enum ShiftRange {
 
-    SIXAM_TO_THREEPM("6:00", "15:00","6:00 to 15:00(MNL TIME)"),
-    TWOPM_TO_ELEVENPM("14:00", "23:00","14:00 to 23:00(MNL TIME)"),
-    TENPM_TO_SEVENAM("22:00", "7:00","22:00-7:00(MNL TIME)")
+    TWELVEAM_TO_TWELVEPM("00:00", "12:00","12am to 12pm(MNL TIME)"),
+    TWELVEPM_TO_TWELVEAM("12:01", "23:59","12pm to 12am(MNL TIME)");
     ;
 
     DateTime startTime;
@@ -45,11 +43,6 @@ public enum ShiftRange {
             Log.d(ShiftRange.class.getName(), sdf2.parse(formattedDate+" "+startTime).toString());
             Log.d(ShiftRange.class.getName(), sdf2.parse(formattedDate+" "+endTime).toString());
 
-//            Date startTimeDate = shiftTimeZone(sdf2.parse(formattedDate+" "+startTime), TimeZone.getTimeZone("GMT"), TimeZone.getTimeZone("EST"));
-//            Date endTimeDate = shiftTimeZone(sdf2.parse(formattedDate+" "+endTime), TimeZone.getTimeZone("GMT"), TimeZone.getTimeZone("EST"));
-
-//            Log.d(ShiftRange.class.getName(), startTimeDate.toString());
-//            Log.d(ShiftRange.class.getName(), endTimeDate.toString());
             Calendar cal = Calendar.getInstance();
             TimeZone tz = cal.getTimeZone();
 
@@ -61,19 +54,6 @@ public enum ShiftRange {
             e.printStackTrace();
         }
 
-
-//        Calendar startCal = Calendar.getInstance();
-//        startCal.set(Calendar.HOUR_OF_DAY,startTime);
-//        startCal.set(Calendar.MINUTE, 0);
-//        startCal.set(Calendar.SECOND, 0);
-//
-//        Calendar endCal = Calendar.getInstance();
-//        endCal.set(Calendar.HOUR_OF_DAY,endTime);
-//        endCal.set(Calendar.MINUTE, 0);
-//        endCal.set(Calendar.SECOND, 0);
-
-//        this.startTime = new DateTime(startCal).withZone(DateTimeZone.forID(PH_TIMEZONE));
-//        this.endTime = new DateTime(endCal).withZone(DateTimeZone.forID(PH_TIMEZONE));
 
         this.label = label;
     }
@@ -88,22 +68,5 @@ public enum ShiftRange {
 
     public String getLabel() {
         return label;
-    }
-
-    private Date shiftTimeZone(Date date, TimeZone sourceTimeZone, TimeZone targetTimeZone) {
-        Calendar sourceCalendar = Calendar.getInstance();
-        sourceCalendar.setTime(date);
-        sourceCalendar.setTimeZone(sourceTimeZone);
-
-        Calendar targetCalendar = Calendar.getInstance();
-        for (int field : new int[] {Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH, Calendar.HOUR, Calendar.MINUTE, Calendar.SECOND, Calendar.MILLISECOND}) {
-            targetCalendar.set(field, sourceCalendar.get(field));
-        }
-        targetCalendar.setTimeZone(targetTimeZone);
-
-        Log.d(ShiftRange.class.getName(), targetCalendar.getTimeZone().toString());
-
-
-        return targetCalendar.getTime();
     }
 }

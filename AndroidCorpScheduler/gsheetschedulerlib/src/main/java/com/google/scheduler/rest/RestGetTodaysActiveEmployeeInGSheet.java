@@ -13,11 +13,14 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,18 +36,18 @@ public class RestGetTodaysActiveEmployeeInGSheet extends BaseGSheetAsyncTask {
     private final static String DATE_HEADER_RANGE = "F1:ZZ1";
     private final static String WHOLE_WITHOUT_HEADERS_DATA_RANGE = "A2:";
     private String lob;
-    private List<ShiftRange> shiftRanges;
+    private ShiftRange shiftRange;
     public RestGetTodaysActiveEmployeeInGSheet(GoogleAccountCredential googleAccountCredential,
                                                Context context,
                                                RestGetTodaysActiveEmployeeInGSheet.Listener listener,
                                                String spreadsheetId,
                                                String tabSheetName,
                                                String lob,
-                                               List<ShiftRange> shiftRanges) {
+                                               ShiftRange shiftRange) {
         super(googleAccountCredential, context, listener, spreadsheetId, tabSheetName);
         this.listener = listener;
         this.lob = lob;
-        this.shiftRanges = shiftRanges;
+        this.shiftRange = shiftRange;
     }
 
     @Override
@@ -163,25 +166,53 @@ public class RestGetTodaysActiveEmployeeInGSheet extends BaseGSheetAsyncTask {
 
     private boolean isShiftIsBetweenRange(String time) {
 
-        String [] timeSplits = time.split(":");
 
-        if(timeSplits.length >= 2) {
-            Calendar shiftCal = Calendar.getInstance();
-            shiftCal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeSplits[0]));
-            shiftCal.set(Calendar.MINUTE, 0);
-            shiftCal.set(Calendar.SECOND, 0);
+        DateTime currentDateTime = new DateTime(Calendar.getInstance().getTime()).withZone(DateTimeZone.forID(PH_TIMEZONE));
 
-            DateTime shiftDateTime = new DateTime(shiftCal).withZone(DateTimeZone.forID(PH_TIMEZONE));
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
 
-            for(ShiftRange shiftRange: shiftRanges) {
+        try {
+            String formattedDate = sdf.format(currentDateTime.toDate());
 
-                if ((shiftDateTime.isEqual(shiftRange.getStartTime()) || shiftDateTime.isAfter(shiftRange.getStartTime())) &&
-                        (shiftDateTime.isEqual(shiftRange.getEndTime()) || shiftDateTime.isBefore(shiftRange.getEndTime()))) {
-                    return true;
-                }
+            Log.d(ShiftRange.class.getName(), "Format date: "+formattedDate);
+
+            DateFormat sdf2 = new SimpleDateFormat("MM-dd-yyyy HH:mm");
+
+            Log.d(ShiftRange.class.getName(), sdf2.parse(formattedDate+" "+time).toString());
+
+            Calendar cal = Calendar.getInstance();
+            TimeZone tz = cal.getTimeZone();
+
+            DateTime shiftDateTime = new DateTime(sdf2.parse(formattedDate+" "+time)).withZone(DateTimeZone.forTimeZone(tz));
+
+
+            if ((shiftDateTime.isEqual(shiftRange.getStartTime()) || shiftDateTime.isAfter(shiftRange.getStartTime())) &&
+                    (shiftDateTime.isEqual(shiftRange.getEndTime()) || shiftDateTime.isBefore(shiftRange.getEndTime()))) {
+                return true;
             }
 
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
+//        String [] timeSplits = time.split(":");
+
+//        if(timeSplits.length >= 2) {
+//            Calendar shiftCal = Calendar.getInstance();
+//            shiftCal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeSplits[0]));
+//            shiftCal.set(Calendar.MINUTE, 0);
+//            shiftCal.set(Calendar.SECOND, 0);
+//
+//            DateTime shiftDateTime = new DateTime(shiftCal).withZone(DateTimeZone.forID(PH_TIMEZONE));
+//
+//            for(ShiftRange shiftRange: shiftRanges) {
+//
+//                if ((shiftDateTime.isEqual(shiftRange.getStartTime()) || shiftDateTime.isAfter(shiftRange.getStartTime())) &&
+//                        (shiftDateTime.isEqual(shiftRange.getEndTime()) || shiftDateTime.isBefore(shiftRange.getEndTime()))) {
+//                    return true;
+//                }
+//            }
+//
+//        }
 
         return false;
     }
