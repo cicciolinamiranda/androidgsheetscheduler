@@ -23,6 +23,7 @@ import com.google.scheduler.presenter.MainPresenter;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -39,6 +40,7 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
     private TextView tvShiftRange;
     private ProgressBar loader_bar;
     private RelativeLayout emptyListMsgLayout;
+    private List<String> lobList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,9 +55,26 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
         main_list.setVisibility(View.GONE);
 
         spinner = findViewById(R.id.spinner);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                if(lobList != null && !lobList.isEmpty() && getShiftRange() != null && !getShiftRange().isEmpty()) {
+                    main_list.setVisibility(View.GONE);
+                    loader_bar.setVisibility(View.VISIBLE);
+                    mainPresenter.getTodaysActiveEmployees(lobList.get(position), getShiftRange());
+                } else {
+                    loader_bar.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
         loader_bar = findViewById(R.id.loading_progress);
 
-        tvShiftRange.setText(getShiftRange().getLabel());
+        setTimeRangeText();
 
     }
 
@@ -63,29 +82,44 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
 
         main_list.setVisibility(View.GONE);
         loader_bar.setVisibility(View.VISIBLE);
-        tvShiftRange.setText(getShiftRange().getLabel());
+        setTimeRangeText();
         mainPresenter.getLobList();
     }
 
-    private ShiftRange getShiftRange () {
-        DateTime currentDateTime = new DateTime(Calendar.getInstance().getTime()).withZone(DateTimeZone.forID(PH_TIMEZONE));
+    private void setTimeRangeText() {
 
+        if(getShiftRange() != null && !getShiftRange().isEmpty()) {
+            StringBuilder range = new StringBuilder();
+            for(ShiftRange shiftRange: getShiftRange()) {
+                range.append(shiftRange.getLabel());
+                range.append("\n");
+            }
+
+            tvShiftRange.setText(range.toString());
+
+        }
+
+    }
+
+    private List<ShiftRange> getShiftRange () {
+        DateTime currentDateTime = new DateTime(Calendar.getInstance().getTime()).withZone(DateTimeZone.forID(PH_TIMEZONE));
+        List<ShiftRange> results = new ArrayList<>();
         if((currentDateTime.isEqual(ShiftRange.SIXAM_TO_THREEPM.getStartTime()) || currentDateTime.isAfter(ShiftRange.SIXAM_TO_THREEPM.getStartTime())) &&
                 (currentDateTime.isEqual(ShiftRange.SIXAM_TO_THREEPM.getEndTime()) || currentDateTime.isBefore(ShiftRange.SIXAM_TO_THREEPM.getEndTime()))) {
-            return ShiftRange.SIXAM_TO_THREEPM;
+            results.add(ShiftRange.SIXAM_TO_THREEPM);
         }
 
         else if((currentDateTime.isEqual(ShiftRange.TWOPM_TO_ELEVENPM.getStartTime()) || currentDateTime.isAfter(ShiftRange.TWOPM_TO_ELEVENPM.getStartTime())) &&
                 (currentDateTime.isEqual(ShiftRange.TWOPM_TO_ELEVENPM.getEndTime()) || currentDateTime.isBefore(ShiftRange.TWOPM_TO_ELEVENPM.getEndTime()))) {
-            return ShiftRange.TWOPM_TO_ELEVENPM;
+            results.add(ShiftRange.SIXAM_TO_THREEPM);
         }
 
         else if((currentDateTime.isEqual(ShiftRange.TENPM_TO_SEVENAM.getStartTime()) || currentDateTime.isAfter(ShiftRange.TENPM_TO_SEVENAM.getStartTime())) &&
                 (currentDateTime.isEqual(ShiftRange.TENPM_TO_SEVENAM.getEndTime()) || currentDateTime.isBefore(ShiftRange.TENPM_TO_SEVENAM.getEndTime()))) {
-            return ShiftRange.TENPM_TO_SEVENAM;
+            results.add(ShiftRange.SIXAM_TO_THREEPM);
         }
 
-        return null;
+        return results;
     }
 
     @Override
@@ -152,26 +186,12 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
     @Override
     public void getLobsResponse(final List<String> lobList) {
         Log.d(MainActivity.class.getName(), lobList.toString());
+        this.lobList = lobList;
 
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(
                 this,R.layout.spinner_text,lobList);
         spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_text);
         spinner.setAdapter(spinnerArrayAdapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                if(lobList != null && !lobList.isEmpty()) {
-                    main_list.setVisibility(View.GONE);
-                    loader_bar.setVisibility(View.VISIBLE);
-                    mainPresenter.getTodaysActiveEmployees(lobList.get(position), getShiftRange());
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
 
     }
 

@@ -33,18 +33,18 @@ public class RestGetTodaysActiveEmployeeInGSheet extends BaseGSheetAsyncTask {
     private final static String DATE_HEADER_RANGE = "F1:ZZ1";
     private final static String WHOLE_WITHOUT_HEADERS_DATA_RANGE = "A2:";
     private String lob;
-    private ShiftRange shiftRange;
+    private List<ShiftRange> shiftRanges;
     public RestGetTodaysActiveEmployeeInGSheet(GoogleAccountCredential googleAccountCredential,
                                                Context context,
                                                RestGetTodaysActiveEmployeeInGSheet.Listener listener,
                                                String spreadsheetId,
                                                String tabSheetName,
                                                String lob,
-                                               ShiftRange shiftRange) {
+                                               List<ShiftRange> shiftRanges) {
         super(googleAccountCredential, context, listener, spreadsheetId, tabSheetName);
         this.listener = listener;
         this.lob = lob;
-        this.shiftRange = shiftRange;
+        this.shiftRanges = shiftRanges;
     }
 
     @Override
@@ -173,10 +173,14 @@ public class RestGetTodaysActiveEmployeeInGSheet extends BaseGSheetAsyncTask {
 
             DateTime shiftDateTime = new DateTime(shiftCal).withZone(DateTimeZone.forID(PH_TIMEZONE));
 
-            if ((shiftDateTime.isEqual(shiftRange.getStartTime()) || shiftDateTime.isAfter(shiftRange.getStartTime())) &&
-                    (shiftDateTime.isEqual(shiftRange.getEndTime()) || shiftDateTime.isBefore(shiftRange.getEndTime()))) {
-                return true;
+            for(ShiftRange shiftRange: shiftRanges) {
+
+                if ((shiftDateTime.isEqual(shiftRange.getStartTime()) || shiftDateTime.isAfter(shiftRange.getStartTime())) &&
+                        (shiftDateTime.isEqual(shiftRange.getEndTime()) || shiftDateTime.isBefore(shiftRange.getEndTime()))) {
+                    return true;
+                }
             }
+
         }
 
         return false;
