@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +38,7 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
     private MainPresenter mainPresenter;
     private TextView tvShiftRange;
     private ProgressBar loader_bar;
+    private RelativeLayout emptyListMsgLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,7 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
         mainPresenter.getLobList();
         tvShiftRange = findViewById(R.id.tv_shift_range);
         main_list = findViewById(R.id.main_list);
+        emptyListMsgLayout = findViewById(R.id.rl_empty_list_row);
         main_list.setVisibility(View.GONE);
 
         spinner = findViewById(R.id.spinner);
@@ -59,7 +62,7 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
     private void refreshData() {
 
         main_list.setVisibility(View.GONE);
-
+        loader_bar.setVisibility(View.VISIBLE);
         tvShiftRange.setText(getShiftRange().getLabel());
         mainPresenter.getLobList();
     }
@@ -108,12 +111,18 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
 
     @Override
     public void getEmployees(List<DataModel> employees) {
+
+        loader_bar.setVisibility(View.GONE);
+
         Log.d(MainActivity.class.getName(), employees.toString());
+        emptyListMsgLayout.setVisibility(View.GONE);
 
         if(employees != null && !employees.isEmpty()) {
             adapter = new MainListAdapter(employees, MainActivity.this);
             main_list.setAdapter(adapter);
             main_list.setVisibility(View.VISIBLE);
+        } else {
+            emptyListMsgLayout.setVisibility(View.VISIBLE);
         }
 
 
@@ -153,6 +162,7 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
                 if(lobList != null && !lobList.isEmpty()) {
                     main_list.setVisibility(View.GONE);
+                    loader_bar.setVisibility(View.VISIBLE);
                     mainPresenter.getTodaysActiveEmployees(lobList.get(position), getShiftRange());
                 }
             }

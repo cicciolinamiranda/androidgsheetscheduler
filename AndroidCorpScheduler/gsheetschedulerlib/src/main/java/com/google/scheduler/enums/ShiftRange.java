@@ -1,12 +1,16 @@
 package com.google.scheduler.enums;
 
+import android.util.Log;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import static com.google.scheduler.constants.AppConstants.PH_TIMEZONE;
 
@@ -27,17 +31,34 @@ public enum ShiftRange {
     String label;
 
     ShiftRange(String startTime, String endTime, String label) {
+        DateTime currentDateTime = new DateTime(Calendar.getInstance().getTime()).withZone(DateTimeZone.forID(PH_TIMEZONE));
 
         SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
 
-        String formattedDate = sdf.format(new Date());
+        try {
+            String formattedDate = sdf.format(currentDateTime.toDate());
 
-        String SHIFT_DATE_FORMAT = "MM-dd-yyyy HH:mm";
-        SimpleDateFormat sdf2 = new SimpleDateFormat("MM-dd-yyyy HH:mm");
+            Log.d(ShiftRange.class.getName(), "Format date: "+formattedDate);
 
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("MM-dd-yyyy HH:mm");
-        this.startTime = formatter.parseDateTime(formattedDate+" "+startTime).withZone(DateTimeZone.forID(PH_TIMEZONE));
-        this.endTime = formatter.parseDateTime(formattedDate+" "+endTime).withZone(DateTimeZone.forID(PH_TIMEZONE));
+            DateFormat sdf2 = new SimpleDateFormat("MM-dd-yyyy HH:mm");
+
+            Log.d(ShiftRange.class.getName(), sdf2.parse(formattedDate+" "+startTime).toString());
+            Log.d(ShiftRange.class.getName(), sdf2.parse(formattedDate+" "+endTime).toString());
+
+//            Date startTimeDate = shiftTimeZone(sdf2.parse(formattedDate+" "+startTime), TimeZone.getTimeZone("GMT"), TimeZone.getTimeZone("EST"));
+//            Date endTimeDate = shiftTimeZone(sdf2.parse(formattedDate+" "+endTime), TimeZone.getTimeZone("GMT"), TimeZone.getTimeZone("EST"));
+
+//            Log.d(ShiftRange.class.getName(), startTimeDate.toString());
+//            Log.d(ShiftRange.class.getName(), endTimeDate.toString());
+
+            this.startTime = new DateTime(sdf2.parse(formattedDate+" "+startTime)).withZone(DateTimeZone.forID(PH_TIMEZONE));
+            this.endTime = new DateTime(sdf2.parse(formattedDate+" "+endTime)).withZone(DateTimeZone.forID(PH_TIMEZONE));
+            Log.d(ShiftRange.class.getName(), this.startTime.toString());
+            Log.d(ShiftRange.class.getName(), this.startTime.toString());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
 
 //        Calendar startCal = Calendar.getInstance();
 //        startCal.set(Calendar.HOUR_OF_DAY,startTime);
@@ -65,5 +86,22 @@ public enum ShiftRange {
 
     public String getLabel() {
         return label;
+    }
+
+    private Date shiftTimeZone(Date date, TimeZone sourceTimeZone, TimeZone targetTimeZone) {
+        Calendar sourceCalendar = Calendar.getInstance();
+        sourceCalendar.setTime(date);
+        sourceCalendar.setTimeZone(sourceTimeZone);
+
+        Calendar targetCalendar = Calendar.getInstance();
+        for (int field : new int[] {Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH, Calendar.HOUR, Calendar.MINUTE, Calendar.SECOND, Calendar.MILLISECOND}) {
+            targetCalendar.set(field, sourceCalendar.get(field));
+        }
+        targetCalendar.setTimeZone(targetTimeZone);
+
+        Log.d(ShiftRange.class.getName(), targetCalendar.getTimeZone().toString());
+
+
+        return targetCalendar.getTime();
     }
 }

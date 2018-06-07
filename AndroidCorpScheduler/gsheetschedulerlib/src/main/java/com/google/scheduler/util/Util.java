@@ -18,10 +18,15 @@ import android.widget.Toast;
 
 import com.google.scheduler.enums.NetworkTypes;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
+import static com.google.scheduler.constants.AppConstants.PH_TIMEZONE;
 import static com.google.scheduler.constants.AppConstants.REQUEST_PERMISSIONS;
 
 /**
@@ -138,7 +143,9 @@ public class Util {
         return columnLetter;
     }
 
-
+    public DateTime convertDateToDateTimeInMnlLocaleTime(Date date) {
+        return new DateTime(date).withZone(DateTimeZone.forID(PH_TIMEZONE));
+    }
     public static NetworkTypes getNetwork(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo info = cm.getActiveNetworkInfo();

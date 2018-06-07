@@ -15,6 +15,7 @@
     <string name="error_user_unauthorized_in_gsheet">User not authorized in gsheet id</string>
 
     <string name="spinner_prompt">- SELECT -</string>
+    <string name="no_records_for_today">No records found for today.</string>
 
     <string-array name="spinner_arrays">
         <item>item 1</item>
