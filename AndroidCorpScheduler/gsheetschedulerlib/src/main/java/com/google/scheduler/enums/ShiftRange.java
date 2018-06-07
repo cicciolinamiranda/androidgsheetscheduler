@@ -50,10 +50,12 @@ public enum ShiftRange {
 
 //            Log.d(ShiftRange.class.getName(), startTimeDate.toString());
 //            Log.d(ShiftRange.class.getName(), endTimeDate.toString());
+            Calendar cal = Calendar.getInstance();
+            TimeZone tz = cal.getTimeZone();
 
-            this.startTime = new DateTime(sdf2.parse(formattedDate+" "+startTime)).withZone(DateTimeZone.forID(PH_TIMEZONE));
-            this.endTime = new DateTime(sdf2.parse(formattedDate+" "+endTime)).withZone(DateTimeZone.forID(PH_TIMEZONE));
-            Log.d(ShiftRange.class.getName(), this.startTime.toString());
+            this.startTime = new DateTime(sdf2.parse(formattedDate+" "+startTime)).withZone(DateTimeZone.forTimeZone(tz));
+            this.endTime = new DateTime(sdf2.parse(formattedDate+" "+endTime)).withZone(DateTimeZone.forTimeZone(tz));
+            Log.d("START2", this.startTime.toString());
             Log.d(ShiftRange.class.getName(), this.startTime.toString());
         } catch (ParseException e) {
             e.printStackTrace();
@@ -77,7 +79,7 @@ public enum ShiftRange {
     }
 
     public DateTime getStartTime() {
-        return startTime;
+        return this.startTime;
     }
 
     public DateTime getEndTime() {
