@@ -104,8 +104,8 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
     private List<ShiftRange> getShiftRange () {
         DateTime currentDateTime = new DateTime(Calendar.getInstance().getTime());
         List<ShiftRange> results = new ArrayList<>();
-
         Log.d("START", currentDateTime.toString());
+
         if((currentDateTime.isEqual(ShiftRange.SIXAM_TO_THREEPM.getStartTime()) || currentDateTime.isAfter(ShiftRange.SIXAM_TO_THREEPM.getStartTime())) &&
                 (currentDateTime.isEqual(ShiftRange.SIXAM_TO_THREEPM.getEndTime()) || currentDateTime.isBefore(ShiftRange.SIXAM_TO_THREEPM.getEndTime()))) {
             results.add(ShiftRange.SIXAM_TO_THREEPM);
