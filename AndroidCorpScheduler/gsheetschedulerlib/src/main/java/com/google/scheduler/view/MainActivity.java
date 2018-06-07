@@ -102,22 +102,23 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
     }
 
     private List<ShiftRange> getShiftRange () {
-        DateTime currentDateTime = new DateTime(Calendar.getInstance().getTime()).withZone(DateTimeZone.forID(PH_TIMEZONE));
+        DateTime currentDateTime = new DateTime(Calendar.getInstance().getTime());
         List<ShiftRange> results = new ArrayList<>();
-        if(!results.contains(ShiftRange.SIXAM_TO_THREEPM) &&
-                (currentDateTime.isEqual(ShiftRange.SIXAM_TO_THREEPM.getStartTime()) || currentDateTime.isAfter(ShiftRange.SIXAM_TO_THREEPM.getStartTime())) &&
+        Log.d("START", currentDateTime.toString());
+
+        if((currentDateTime.isEqual(ShiftRange.SIXAM_TO_THREEPM.getStartTime()) || currentDateTime.isAfter(ShiftRange.SIXAM_TO_THREEPM.getStartTime())) &&
                 (currentDateTime.isEqual(ShiftRange.SIXAM_TO_THREEPM.getEndTime()) || currentDateTime.isBefore(ShiftRange.SIXAM_TO_THREEPM.getEndTime()))) {
             results.add(ShiftRange.SIXAM_TO_THREEPM);
         }
 
-        if(!results.contains(ShiftRange.TWOPM_TO_ELEVENPM) && (currentDateTime.isEqual(ShiftRange.TWOPM_TO_ELEVENPM.getStartTime()) || currentDateTime.isAfter(ShiftRange.TWOPM_TO_ELEVENPM.getStartTime())) &&
+        else if((currentDateTime.isEqual(ShiftRange.TWOPM_TO_ELEVENPM.getStartTime()) || currentDateTime.isAfter(ShiftRange.TWOPM_TO_ELEVENPM.getStartTime())) &&
                 (currentDateTime.isEqual(ShiftRange.TWOPM_TO_ELEVENPM.getEndTime()) || currentDateTime.isBefore(ShiftRange.TWOPM_TO_ELEVENPM.getEndTime()))) {
-            results.add(ShiftRange.TWOPM_TO_ELEVENPM);
+            results.add(ShiftRange.SIXAM_TO_THREEPM);
         }
 
-        if(!results.contains(ShiftRange.TENPM_TO_SEVENAM) && (currentDateTime.isEqual(ShiftRange.TENPM_TO_SEVENAM.getStartTime()) || currentDateTime.isAfter(ShiftRange.TENPM_TO_SEVENAM.getStartTime())) &&
+        else if((currentDateTime.isEqual(ShiftRange.TENPM_TO_SEVENAM.getStartTime()) || currentDateTime.isAfter(ShiftRange.TENPM_TO_SEVENAM.getStartTime())) &&
                 (currentDateTime.isEqual(ShiftRange.TENPM_TO_SEVENAM.getEndTime()) || currentDateTime.isBefore(ShiftRange.TENPM_TO_SEVENAM.getEndTime()))) {
-            results.add(ShiftRange.TENPM_TO_SEVENAM);
+            results.add(ShiftRange.SIXAM_TO_THREEPM);
         }
 
         return results;
