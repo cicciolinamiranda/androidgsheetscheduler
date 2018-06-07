@@ -11,6 +11,7 @@
 *.pyc
 *.idea
 .idea/*
+*/.idea/*
 *.class
 */build/*
 *.java~*
