@@ -23,7 +23,8 @@ public class MainListAdapter extends ArrayAdapter<DataModel> {
         TextView txt_name;
         TextView txt_tierGroup;
         TextView txt_role;
-        TextView txt_time;
+        TextView txt_time_start;
+        TextView txt_time_end;
     }
 
     public MainListAdapter(List<DataModel> data, Context context) {
@@ -51,7 +52,8 @@ public class MainListAdapter extends ArrayAdapter<DataModel> {
                 viewHolder.txt_name = convertView.findViewById(R.id.txt_name);
                 viewHolder.txt_tierGroup = convertView.findViewById(R.id.txt_tierGroup);
                 viewHolder.txt_role = convertView.findViewById(R.id.txt_role);
-                viewHolder.txt_time = convertView.findViewById(R.id.txt_time);
+                viewHolder.txt_time_start = convertView.findViewById(R.id.txt_time_start);
+                viewHolder.txt_time_end = convertView.findViewById(R.id.txt_time_end);
             }else{
                 convertView = inflater.inflate(R.layout.empty_list_row, parent, false);
             }
@@ -65,7 +67,8 @@ public class MainListAdapter extends ArrayAdapter<DataModel> {
             viewHolder.txt_name.setText(dataModel.getName());
             viewHolder.txt_tierGroup.setText(dataModel.getTierGroup());
             viewHolder.txt_role.setText(dataModel.getRole());
-            viewHolder.txt_time.setText(dataModel.getTime());
+            viewHolder.txt_time_start.setText(dataModel.getTime());
+            viewHolder.txt_time_end.setText(dataModel.getTime());
         }
         return convertView;
     }

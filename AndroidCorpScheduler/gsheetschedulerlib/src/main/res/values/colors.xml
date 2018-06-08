@@ -17,6 +17,9 @@
     <color name="grey_400">#bdbdbd</color>
     <color name="grey_500">#9E9E9E</color>
 
+    <!--Transparent-->
+    <color name="transparent">#00FFFFFF</color>
+
     <!--Cyan-->
     <color name="cyan_A700">#607D8B</color>
 

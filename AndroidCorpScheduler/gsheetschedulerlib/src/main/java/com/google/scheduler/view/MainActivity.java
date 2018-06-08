@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -36,10 +37,10 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
     private MainListAdapter adapter;
     private Spinner spinner;
     private MainPresenter mainPresenter;
-    private TextView tvShiftRange;
     private ProgressBar loader_bar;
     private RelativeLayout emptyListMsgLayout;
     private List<String> lobList;
+    private ImageButton btn_sort;
 
     private boolean isUserNotPermittedAlreadyCalled;
 
@@ -50,11 +51,11 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
 
         mainPresenter = new MainPresenter(this, this);
         mainPresenter.getLobList();
-        tvShiftRange = findViewById(R.id.tv_shift_range);
         main_list = findViewById(R.id.main_list);
         emptyListMsgLayout = findViewById(R.id.rl_empty_list_row);
         emptyListMsgLayout.setVisibility(View.GONE);
         main_list.setVisibility(View.GONE);
+        btn_sort = findViewById(R.id.btn_sort);
 
         spinner = findViewById(R.id.spinner);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -77,6 +78,13 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
         loader_bar = findViewById(R.id.loading_progress);
 
         setTimeRangeText();
+
+        btn_sort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //sort here
+            }
+        });
 
     }
 
