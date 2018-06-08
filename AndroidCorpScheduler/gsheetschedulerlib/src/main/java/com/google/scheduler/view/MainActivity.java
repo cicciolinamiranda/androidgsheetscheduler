@@ -99,7 +99,7 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
     private void setTimeRangeText() {
 
         if(getShiftRange() != null ) {
-            tvShiftRange.setText(getShiftRange().getLabel());
+//            tvShiftRange.setText(getShiftRange().getLabel());
         }
 
     }
