@@ -45,8 +45,8 @@ public class MainPresenter {
                         }
 
                         @Override
-                        public void userNotPermitted() {
-                            listener.userNotPermitted();
+                        public void userNotPermitted(String message) {
+                            listener.userNotPermitted(message);
                         }
                     }, context.getString(R.string.spreadsheet_id),
                     context.getString(R.string.sheet_name), lob.toUpperCase(), shiftRange);
@@ -72,8 +72,8 @@ public class MainPresenter {
                     }
 
                     @Override
-                    public void userNotPermitted() {
-                        listener.userNotPermitted();
+                    public void userNotPermitted(String message) {
+                        listener.userNotPermitted(message);
                     }
                 }, context.getString(R.string.spreadsheet_id),
                 context.getString(R.string.sheet_name));

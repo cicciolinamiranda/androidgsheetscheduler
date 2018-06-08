@@ -57,20 +57,26 @@ public abstract class BaseGSheetAsyncTask extends AsyncTask<Object, Void, Object
             return null;
         }catch (GoogleJsonResponseException e) {
             if(e.getStatusCode() == 403 || e.getStatusCode() == 400) {
-                listener.userNotPermitted();
+
+                if(e.getDetails() != null && e.getDetails().getErrors() != null &&
+                        !e.getDetails().getErrors().isEmpty()) {
+                    listener.userNotPermitted(e.getDetails().getErrors().get(0).getMessage());
+                } else {
+                    listener.userNotPermitted(e.getLocalizedMessage());
+                }
             }
             e.printStackTrace();
             cancel(true);
             return null;
         }
         catch (IllegalArgumentException e) {
-            listener.userNotPermitted();
+            listener.userNotPermitted(e.getLocalizedMessage());
             e.printStackTrace();
             cancel(true);
             return null;
         }
         catch (Exception e) {
-            listener.userNotPermitted();
+            listener.userNotPermitted(e.getLocalizedMessage());
             e.printStackTrace();
             cancel(true);
             return null;
@@ -81,6 +87,6 @@ public abstract class BaseGSheetAsyncTask extends AsyncTask<Object, Void, Object
 
     public interface BaseGSheetListener {
         void requestForAuthorization(Intent intent);
-        void userNotPermitted();
+        void userNotPermitted(String message);
     }
 }

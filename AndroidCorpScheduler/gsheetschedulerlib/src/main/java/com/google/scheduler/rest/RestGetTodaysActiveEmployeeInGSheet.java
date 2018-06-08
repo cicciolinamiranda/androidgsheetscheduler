@@ -19,8 +19,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,6 +39,7 @@ public class RestGetTodaysActiveEmployeeInGSheet extends BaseGSheetAsyncTask {
     private final static String WHOLE_WITHOUT_HEADERS_DATA_RANGE = "A2:";
     private String lob;
     private ShiftRange shiftRange;
+    private final Pattern P = Pattern.compile(".*([01]?[0-9]|2[0-3]):[0-5][0-9].*");
     public RestGetTodaysActiveEmployeeInGSheet(GoogleAccountCredential googleAccountCredential,
                                                Context context,
                                                RestGetTodaysActiveEmployeeInGSheet.Listener listener,
@@ -67,33 +69,47 @@ public class RestGetTodaysActiveEmployeeInGSheet extends BaseGSheetAsyncTask {
 
             Log.d(RestGetTodaysActiveEmployeeInGSheet.class.getName(), dateSheetRange.getValues().toString());
 
-            String dateColumn = getTodaysDateColumn(dateSheetRange.getValues());
-            String timeDataRange = tabSheetName+"!"+dateColumn+"2:"+dateColumn;
+            String todaysDateColumn = getTodaysDateColumn(dateSheetRange.getValues());
 
-            ValueRange timeSheetRange = mService.spreadsheets().values()
-                    .get(spreadsheetId, timeDataRange)
-                    .execute();
+            String yesterdaysDateColumn = getYesterdaysDateColumn(dateSheetRange.getValues());
 
-            if(timeSheetRange != null && timeSheetRange.getValues() != null &&
-                    !timeSheetRange.getValues().isEmpty()) {
-
-                List<Integer> indexThatNeedsToBeRetrieved = getListOfRowNumThatIsOnDuty(timeSheetRange.getValues());
-
-                String employeeDataRange = tabSheetName+"!"+WHOLE_WITHOUT_HEADERS_DATA_RANGE+dateColumn;
-                ValueRange wholeDataRange = mService.spreadsheets().values()
-                        .get(spreadsheetId,  employeeDataRange)
+            if(todaysDateColumn != null) {
+                String todaysTimeDataRange = tabSheetName + "!" + todaysDateColumn + "2:" + todaysDateColumn;
+                ValueRange todaysTimeSheetRange = mService.spreadsheets().values()
+                        .get(spreadsheetId, todaysTimeDataRange)
                         .execute();
 
-                if(wholeDataRange != null && wholeDataRange.getValues() != null &&
-                        !wholeDataRange.getValues().isEmpty()) {
+                ValueRange yesterdaysTimeSheetRange = null;
 
-                    for(Integer rowData: indexThatNeedsToBeRetrieved) {
-                        results.add(wholeDataRange.getValues().get(rowData));
+                if(yesterdaysDateColumn != null) {
+                    String yesterdaysTimeDataRange = tabSheetName + "!" + yesterdaysDateColumn + "2:" + yesterdaysDateColumn;
+
+
+                    yesterdaysTimeSheetRange = mService.spreadsheets().values()
+                            .get(spreadsheetId, yesterdaysTimeDataRange)
+                            .execute();
+                }
+
+                if (todaysTimeSheetRange != null && todaysTimeSheetRange.getValues() != null &&
+                        !todaysTimeSheetRange.getValues().isEmpty()) {
+
+                    List<Integer> indexThatNeedsToBeRetrieved = getListOfRowNumThatIsOnDuty(yesterdaysTimeSheetRange, todaysTimeSheetRange);
+
+                    String employeeDataRange = tabSheetName + "!" + WHOLE_WITHOUT_HEADERS_DATA_RANGE + todaysDateColumn;
+                    ValueRange wholeDataRange = mService.spreadsheets().values()
+                            .get(spreadsheetId, employeeDataRange)
+                            .execute();
+
+                    if (wholeDataRange != null && wholeDataRange.getValues() != null &&
+                            !wholeDataRange.getValues().isEmpty()) {
+
+                        for (Integer rowData : indexThatNeedsToBeRetrieved) {
+                            results.add(wholeDataRange.getValues().get(rowData));
+                        }
                     }
                 }
+
             }
-
-
 
         }
         return results;
@@ -107,9 +123,15 @@ public class RestGetTodaysActiveEmployeeInGSheet extends BaseGSheetAsyncTask {
 
     private String getTodaysDateColumn(List<List<Object>> values){
 
-        String column = "F";
+        String column = null;
 
-        String todaysDateStr = new SimpleDateFormat("MM-dd-yyyy").format(new Date());
+        DateTime currentDateTime = new DateTime(Calendar.getInstance().getTime()).withZone(DateTimeZone.forID(PH_TIMEZONE));
+        Log.d(RestGetTodaysActiveEmployeeInGSheet.class.getName(), "getYesterdaysDateColumn currentDateTime: "+currentDateTime.toString());
+
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
+        sdf.setTimeZone(TimeZone.getTimeZone(PH_TIMEZONE));
+
+        String todaysDateStr = sdf.format(currentDateTime.toDate());
         for(List<Object> employeesArr: values){
 
                 for(int i=0; i < employeesArr.size(); i++) {
@@ -126,22 +148,68 @@ public class RestGetTodaysActiveEmployeeInGSheet extends BaseGSheetAsyncTask {
         return column;
     }
 
-    private List<Integer> getListOfRowNumThatIsOnDuty(List<List<Object>> values){
+    private String getYesterdaysDateColumn(List<List<Object>> values){
 
-        List<Integer> listOfRowsThatIsOnDuty = new ArrayList<>();
+        String column = null;
+        DateTime currentDateTime = new DateTime(Calendar.getInstance().getTime()).minusDays(1).withZone(DateTimeZone.forID(PH_TIMEZONE));
+        Log.d(RestGetTodaysActiveEmployeeInGSheet.class.getName(), "getYesterdaysDateColumn currentDateTime: "+currentDateTime.toString());
 
-        Pattern p = Pattern.compile(".*([01]?[0-9]|2[0-3]):[0-5][0-9].*");
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
+        sdf.setTimeZone(TimeZone.getTimeZone(PH_TIMEZONE));
 
-        for(int i=0; i < values.size(); i++) {
-            List<Object> timestampArr =  values.get(i);
-            if(!timestampArr.isEmpty()) {
-                Matcher m = p.matcher((String) timestampArr.get(0));
+        String yesterdaysDateStr = sdf.format(currentDateTime.toDate());
 
-                if (m.matches()) {
-                    listOfRowsThatIsOnDuty.add(i);
+        for(List<Object> employeesArr: values){
+
+            for(int i=0; i < employeesArr.size(); i++) {
+
+                if(yesterdaysDateStr.equalsIgnoreCase((String)employeesArr.get(i))) {
+                    column = Util.getInstance().fromColumnNumberToColumnLetter(i);
+                    break;
                 }
             }
 
+
+        }
+
+        return column;
+    }
+
+    private List<Integer> getListOfRowNumThatIsOnDuty(ValueRange yesterdaysValueRange, ValueRange todaysValueRange){
+        List<Integer> listOfRowsThatIsOnDuty = new ArrayList<>();
+
+        if(todaysValueRange != null) {
+            List<List<Object>> todaysValues = todaysValueRange.getValues();
+
+            for (int i = 0; i < todaysValues.size(); i++) {
+                List<Object> timestampArr = todaysValues.get(i);
+                if (!timestampArr.isEmpty()) {
+                    Matcher m = P.matcher((String) timestampArr.get(0));
+
+                    if (m.matches()) {
+                        listOfRowsThatIsOnDuty.add(i);
+                    }
+                }
+
+            }
+        }
+
+        if(yesterdaysValueRange != null) {
+            List<List<Object>> yesterdaysValues = yesterdaysValueRange.getValues();
+            for (int i = 0; i < yesterdaysValues.size(); i++) {
+                List<Object> timestampArr = yesterdaysValues.get(i);
+                if (!timestampArr.isEmpty()) {
+                    Matcher m = P.matcher((String) timestampArr.get(0));
+
+                    if (m.matches()) {
+
+                        if (!listOfRowsThatIsOnDuty.contains(i)) {
+                            listOfRowsThatIsOnDuty.add(i);
+                        }
+                    }
+                }
+
+            }
         }
 
         return listOfRowsThatIsOnDuty;
@@ -149,51 +217,123 @@ public class RestGetTodaysActiveEmployeeInGSheet extends BaseGSheetAsyncTask {
 
     private ArrayList<DataModel> translateToEmployeeNames(List<List<Object>> values){
         ArrayList<DataModel>  employeeList = new ArrayList<>();
-
+        Set<String> employeeNames = new HashSet<>();
         for(List<Object> employeeArr: values){
 
                 if(!employeeArr.isEmpty() && employeeArr.size() >= 4 &&
                         ((String)employeeArr.get(1)).equalsIgnoreCase(lob)
                         &&
-                        isShiftIsBetweenRange(((String)employeeArr.get(employeeArr.size()-1)))
+                        isShiftIsBetweenRangeToday(((String)employeeArr.get(employeeArr.size()-1))) &&
+                        !employeeNames.contains(employeeArr.get(4))
                         ) {
+                    employeeNames.add((String)employeeArr.get(4));
                     employeeList.add(new DataModel(((String)employeeArr.get(4)),((String)employeeArr.get(1)),((String)employeeArr.get(3)),((String)employeeArr.get(employeeArr.size()-1))));
                 }
+
+            if(!employeeArr.isEmpty() && employeeArr.size() >= 4 &&
+                    ((String)employeeArr.get(1)).equalsIgnoreCase(lob)
+                    &&
+                    isShiftIsBetweenRangeYesterday(((String)employeeArr.get(employeeArr.size()-2))) &&
+                    !employeeNames.contains(employeeArr.get(4))
+                    ) {
+                employeeNames.add((String)employeeArr.get(4));
+                employeeList.add(new DataModel(((String)employeeArr.get(4)),((String)employeeArr.get(1)),((String)employeeArr.get(3)),((String)employeeArr.get(employeeArr.size()-2))));
+            }
 
         }
 
         return employeeList;
     }
 
-    private boolean isShiftIsBetweenRange(String time) {
+    private boolean isShiftIsBetweenRangeToday(String todaysStartTime) {
 
 
         DateTime currentDateTime = new DateTime(Calendar.getInstance().getTime()).withZone(DateTimeZone.forID(PH_TIMEZONE));
+//        DateTime yesterdaysDateTime = new DateTime(Calendar.getInstance().getTime()).minusDays(1).withZone(DateTimeZone.forID(PH_TIMEZONE));
 
         SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
         sdf.setTimeZone(TimeZone.getTimeZone(PH_TIMEZONE));
 
         try {
-            String formattedDate = sdf.format(currentDateTime.toDate());
+            String formattedTodaysDate = sdf.format(currentDateTime.toDate());
+//            String formattedYesterdaysDate = sdf.format(yesterdaysDateTime.toDate());
 
-            Log.d(ShiftRange.class.getName(), "Format date: "+formattedDate);
+            Log.d(ShiftRange.class.getName(), "Format todays date: "+formattedTodaysDate);
+//            Log.d(ShiftRange.class.getName(), "Format yesterdays date: "+formattedYesterdaysDate);
 
             DateFormat sdf2 = new SimpleDateFormat("MM-dd-yyyy HH:mm");
             sdf2.setTimeZone(TimeZone.getTimeZone(PH_TIMEZONE));
 
-            Log.d(ShiftRange.class.getName(), sdf2.parse(formattedDate+" "+time).toString());
+            Log.d(ShiftRange.class.getName(), sdf2.parse(formattedTodaysDate+" "+todaysStartTime).toString());
+//            Log.d(ShiftRange.class.getName(), sdf2.parse(formattedYesterdaysDate+" "+yesterdaysStartTime).toString());
 
-            DateTime shiftDateTime = new DateTime(sdf2.parse(formattedDate+" "+time)).withZone(DateTimeZone.forTimeZone(sdf2.getTimeZone()));
+            DateTime shiftDateTimeStart = new DateTime(sdf2.parse(formattedTodaysDate+" "+todaysStartTime)).withZone(DateTimeZone.forTimeZone(sdf2.getTimeZone()));
+//            DateTime shiftDateTimeEnd = new DateTime(sdf2.parse(formattedYesterdaysDate+" "+yesterdaysStartTime)).plusHours(9).withZone(DateTimeZone.forTimeZone(sdf2.getTimeZone()));
 
-            Log.d(MainActivity.class.getName(), shiftDateTime.toString());
+            Log.d(MainActivity.class.getName(), shiftDateTimeStart.toString());
 
-            if ((shiftDateTime.isEqual(shiftRange.getStartTime()) || shiftDateTime.isAfter(shiftRange.getStartTime())) &&
-                    (shiftDateTime.isEqual(shiftRange.getEndTime()) || shiftDateTime.isBefore(shiftRange.getEndTime()))) {
+            if ((shiftDateTimeStart.isEqual(shiftRange.getStartTime()) || shiftDateTimeStart.isAfter(shiftRange.getStartTime())) &&
+                    (shiftDateTimeStart.isEqual(shiftRange.getEndTime()) || shiftDateTimeStart.isBefore(shiftRange.getEndTime()))) {
                 return true;
             }
 
+//            else if ((shiftDateTimeEnd.isEqual(shiftRange.getStartTime()) || shiftDateTimeEnd.isAfter(shiftRange.getStartTime())) &&
+//                    (shiftDateTimeEnd.isEqual(shiftRange.getEndTime()) || shiftDateTimeEnd.isBefore(shiftRange.getEndTime()))) {
+//                return true;
+//            }
+
         } catch (ParseException e) {
             e.printStackTrace();
+        }
+
+        return false;
+    }
+
+
+    private boolean isShiftIsBetweenRangeYesterday(String yesterdaysStartTime) {
+
+        Matcher m = P.matcher(yesterdaysStartTime);
+
+        if (m.matches()) {
+
+//        DateTime currentDateTime = new DateTime(Calendar.getInstance().getTime()).withZone(DateTimeZone.forID(PH_TIMEZONE));
+            DateTime yesterdaysDateTime = new DateTime(Calendar.getInstance().getTime()).minusDays(1).withZone(DateTimeZone.forID(PH_TIMEZONE));
+
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
+            sdf.setTimeZone(TimeZone.getTimeZone(PH_TIMEZONE));
+
+            try {
+//            String formattedTodaysDate = sdf.format(currentDateTime.toDate());
+                String formattedYesterdaysDate = sdf.format(yesterdaysDateTime.toDate());
+
+//            Log.d(ShiftRange.class.getName(), "Format todays date: "+formattedTodaysDate);
+                Log.d(ShiftRange.class.getName(), "Format yesterdays date: " + formattedYesterdaysDate);
+
+                DateFormat sdf2 = new SimpleDateFormat("MM-dd-yyyy HH:mm");
+                sdf2.setTimeZone(TimeZone.getTimeZone(PH_TIMEZONE));
+
+//            Log.d(ShiftRange.class.getName(), sdf2.parse(formattedTodaysDate+" "+todaysStartTime).toString());
+                Log.d(ShiftRange.class.getName(), sdf2.parse(formattedYesterdaysDate + " " + yesterdaysStartTime).toString());
+
+//            DateTime shiftDateTimeStart = new DateTime(sdf2.parse(formattedTodaysDate+" "+todaysStartTime)).withZone(DateTimeZone.forTimeZone(sdf2.getTimeZone()));
+                DateTime shiftDateTimeEnd = new DateTime(sdf2.parse(formattedYesterdaysDate + " " + yesterdaysStartTime)).plusHours(9).withZone(DateTimeZone.forTimeZone(sdf2.getTimeZone()));
+
+//            Log.d(MainActivity.class.getName(), shiftDateTimeStart.toString());
+
+//            if ((shiftDateTimeStart.isEqual(shiftRange.getStartTime()) || shiftDateTimeStart.isAfter(shiftRange.getStartTime())) &&
+//                    (shiftDateTimeStart.isEqual(shiftRange.getEndTime()) || shiftDateTimeStart.isBefore(shiftRange.getEndTime()))) {
+//                return true;
+//            }
+
+                if ((shiftDateTimeEnd.isEqual(shiftRange.getStartTime()) || shiftDateTimeEnd.isAfter(shiftRange.getStartTime())) &&
+                        (shiftDateTimeEnd.isEqual(shiftRange.getEndTime()) || shiftDateTimeEnd.isBefore(shiftRange.getEndTime()))) {
+                    return true;
+                }
+
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
 
         return false;

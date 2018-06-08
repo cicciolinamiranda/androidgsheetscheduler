@@ -15,6 +15,6 @@ public interface MainInterface {
     void getEmployees(List<DataModel> employees);
     void getLobsResponse(List<String> lobList);
     void requestForAuthorization(Intent intent);
-    void userNotPermitted();
+    void userNotPermitted(String message);
 
 }
