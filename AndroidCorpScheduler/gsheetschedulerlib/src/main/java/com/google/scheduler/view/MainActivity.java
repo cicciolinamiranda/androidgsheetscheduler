@@ -13,7 +13,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.scheduler.R;
@@ -24,7 +23,10 @@ import com.google.scheduler.presenter.MainPresenter;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static com.google.scheduler.constants.AppConstants.PH_TIMEZONE;
@@ -41,6 +43,8 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
     private RelativeLayout emptyListMsgLayout;
     private List<String> lobList;
     private ImageButton btn_sort;
+    private boolean isAscending;
+    private List<DataModel> employees = new ArrayList<>();
 
     private boolean isUserNotPermittedAlreadyCalled;
 
@@ -52,6 +56,9 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
         mainPresenter = new MainPresenter(this, this);
         mainPresenter.getLobList();
         main_list = findViewById(R.id.main_list);
+
+        View listHeaderView = getLayoutInflater().inflate(R.layout.header_main_list,null);
+        main_list.addHeaderView(listHeaderView);
         emptyListMsgLayout = findViewById(R.id.rl_empty_list_row);
         emptyListMsgLayout.setVisibility(View.GONE);
         main_list.setVisibility(View.GONE);
@@ -77,12 +84,11 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
         });
         loader_bar = findViewById(R.id.loading_progress);
 
-        setTimeRangeText();
-
         btn_sort.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                //sort here
+            public void onClick(View view) {
+                isAscending = !isAscending;
+                setListToAdapter();
             }
         });
 
@@ -92,16 +98,7 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
 
         main_list.setVisibility(View.GONE);
         loader_bar.setVisibility(View.VISIBLE);
-        setTimeRangeText();
         mainPresenter.getLobList();
-    }
-
-    private void setTimeRangeText() {
-
-        if(getShiftRange() != null ) {
-            tvShiftRange.setText(getShiftRange().getLabel());
-        }
-
     }
 
     private ShiftRange getShiftRange () {
@@ -150,19 +147,40 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
     public void getEmployees(List<DataModel> employees) {
 
         loader_bar.setVisibility(View.GONE);
-
         Log.d(MainActivity.class.getName(), employees.toString());
-        emptyListMsgLayout.setVisibility(View.GONE);
+        this.employees = employees;
+        this.isAscending = true;
+        setListToAdapter();
 
+
+    }
+
+    private void setListToAdapter() {
+        emptyListMsgLayout.setVisibility(View.GONE);
         if(employees != null && !employees.isEmpty()) {
+
+            if(this.isAscending) {
+                Collections.sort(employees, new Comparator<DataModel>() {
+                    @Override
+                    public int compare(DataModel dataModel, DataModel dataModel2) {
+                        return dataModel.getTime().compareTo(dataModel2.getTime());
+                    }
+                });
+            } else {
+                Collections.sort(employees, new Comparator<DataModel>() {
+                    @Override
+                    public int compare(DataModel dataModel, DataModel dataModel2) {
+                        return dataModel2.getTime().compareTo(dataModel.getTime());
+                    }
+                });
+            }
+
             adapter = new MainListAdapter(employees, MainActivity.this);
             main_list.setAdapter(adapter);
             main_list.setVisibility(View.VISIBLE);
         } else {
             emptyListMsgLayout.setVisibility(View.VISIBLE);
         }
-
-
     }
 
     @Override

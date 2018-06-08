@@ -1,5 +1,7 @@
 package com.google.scheduler.view;
 
+import org.joda.time.DateTime;
+
 /**
  * Created by kfugaban on 6/6/18.
  */
@@ -9,9 +11,9 @@ public class DataModel {
     String name;
     String tierGroup;
     String role;
-    String time;
+    DateTime time;
 
-    public DataModel(String name, String tierGroup, String role, String time ) {
+    public DataModel(String name, String tierGroup, String role, DateTime time ) {
         this.name=name;
         this.tierGroup=tierGroup;
         this.role=role;
@@ -31,7 +33,7 @@ public class DataModel {
         return this.role;
     }
 
-    public String getTime() {
+    public DateTime getTime() {
         return this.time;
     }
 }

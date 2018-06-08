@@ -13,23 +13,24 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:orientation="horizontal"
-        android:weightSum="8"
         android:layout_alignParentTop="true"
+        android:weightSum="3"
         android:background="@color/colorPrimaryLight">
 
         <Spinner
             android:id="@+id/spinner"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:prompt="@string/spinner_prompt"
-            android:layout_weight="7"
             android:layout_gravity="center_vertical|center_horizontal"/>
 
         <ImageButton
             android:id="@+id/btn_sort"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_weight="3.9"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:src="@drawable/ic_ascending"
             android:background="@color/transparent"/>
 
@@ -53,7 +54,10 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/loading_progress"/>
 
-    <include layout="@layout/empty_list_row" />
+    <include
+        layout="@layout/empty_list_row"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
 
 
 </RelativeLayout>
