@@ -196,15 +196,25 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
     }
 
     @Override
-    public void userNotPermitted() {
+    public void userNotPermitted(final String message) {
 
         if(!isUserNotPermittedAlreadyCalled) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(MainActivity.this, getString(R.string.error_user_unauthorized_in_gsheet) + getString(R.string.spreadsheet_id), Toast.LENGTH_SHORT).show();
-                    logout();
+                    String messageAlert = message;
                     isUserNotPermittedAlreadyCalled = true;
+
+                    if(message.equalsIgnoreCase("The caller does not have permission")) {
+                        messageAlert = String.format(getString(R.string.error_user_unauthorized_in_gsheet), getString(R.string.spreadsheet_id));
+                        logout();
+                    } else {
+                        loader_bar.setVisibility(View.GONE);
+                        emptyListMsgLayout.setVisibility(View.VISIBLE);
+                    }
+
+                    Toast.makeText(MainActivity.this, messageAlert, Toast.LENGTH_SHORT).show();
+
                 }
             });
         }
