@@ -269,12 +269,18 @@ public class RestGetTodaysActiveEmployeeInGSheet extends BaseGSheetAsyncTask {
 
                 Log.d(ShiftRange.class.getName(), sdf2.parse(formattedTodaysDate + " " + todaysStartTime).toString());
 
-                DateTime shiftDateTimeStart = new DateTime(sdf2.parse(formattedTodaysDate + " " + todaysStartTime)).withZone(DateTimeZone.forTimeZone(sdf2.getTimeZone()));
+                DateTime startShiftDateTimeStart = new DateTime(sdf2.parse(formattedTodaysDate + " " + todaysStartTime)).withZone(DateTimeZone.forTimeZone(sdf2.getTimeZone()));
+                DateTime endShiftDateTimeStart = new DateTime(sdf2.parse(formattedTodaysDate + " " + todaysStartTime)).plusHours(9).withZone(DateTimeZone.forTimeZone(sdf2.getTimeZone()));
 
-                Log.d(MainActivity.class.getName(), shiftDateTimeStart.toString());
+                Log.d(MainActivity.class.getName(), startShiftDateTimeStart.toString());
 
-                if ((shiftDateTimeStart.isEqual(shiftRange.getStartTime()) || shiftDateTimeStart.isAfter(shiftRange.getStartTime())) &&
-                        (shiftDateTimeStart.isEqual(shiftRange.getEndTime()) || shiftDateTimeStart.isBefore(shiftRange.getEndTime()))) {
+                if ((startShiftDateTimeStart.isEqual(shiftRange.getStartTime()) || startShiftDateTimeStart.isAfter(shiftRange.getStartTime())) &&
+                        (startShiftDateTimeStart.isEqual(shiftRange.getEndTime()) || startShiftDateTimeStart.isBefore(shiftRange.getEndTime()))) {
+                    return true;
+                }
+
+                if ((endShiftDateTimeStart.isEqual(shiftRange.getStartTime()) || endShiftDateTimeStart.isAfter(shiftRange.getStartTime())) &&
+                        (endShiftDateTimeStart.isEqual(shiftRange.getEndTime()) || endShiftDateTimeStart.isBefore(shiftRange.getEndTime()))) {
                     return true;
                 }
 
