@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Android Corp Scheduler</string>
-    <string name="spreadsheet_id">1Q_Dc-fLg0-9AX4vx_mbm8AshMwhfFS5pavCvHnQD9LM</string>
+    <!--<string name="spreadsheet_id">1Q_Dc-fLg0-9AX4vx_mbm8AshMwhfFS5pavCvHnQD9LM</string>-->
+    <string name="spreadsheet_id">1eyNEEXNKc5xsyq5iSwc2EiqyT3GMlPatTC8_cLqUDhM</string>
     <string name="sheet_name">Schedule Dashboard</string>
 
 </resources>

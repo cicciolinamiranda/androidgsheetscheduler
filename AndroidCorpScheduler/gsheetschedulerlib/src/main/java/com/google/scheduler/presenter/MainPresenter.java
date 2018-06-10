@@ -9,6 +9,7 @@ import com.google.scheduler.enums.ShiftRange;
 import com.google.scheduler.interfaces.MainInterface;
 import com.google.scheduler.rest.RestGetLobInGSheet;
 import com.google.scheduler.rest.RestGetTodaysActiveEmployeeInGSheet;
+import com.google.scheduler.rest.RestUpdateSchedToAbsentGSheet;
 import com.google.scheduler.view.DataModel;
 
 import java.util.ArrayList;
@@ -79,6 +80,37 @@ public class MainPresenter {
                 context.getString(R.string.sheet_name));
 
         restGetLobInGSheet.execute();
+    }
+
+    public void tagEmployeeAsAbsent(final DataModel dataModel) {
+
+        RestUpdateSchedToAbsentGSheet restUpdateSchedToAbsentGSheet = new RestUpdateSchedToAbsentGSheet(
+                ((MainApplication)this.context.getApplicationContext()).getmCredential(),
+                this.context,
+                new RestUpdateSchedToAbsentGSheet.Listener() {
+                    @Override
+                    public void result(Integer updatedRow) {
+
+                        if(updatedRow != null && updatedRow > 0) {
+                            listener.tagEmployeeAsAbsentResponse(true, dataModel);
+                        } else {
+                            listener.tagEmployeeAsAbsentResponse(false, dataModel);
+                        }
+                    }
+
+                    @Override
+                    public void requestForAuthorization(Intent intent) {
+                        listener.requestForAuthorization(intent);
+                    }
+
+                    @Override
+                    public void userNotPermitted(String message) {
+                        listener.userNotPermitted(message);
+                    }
+                }, context.getString(R.string.spreadsheet_id),
+                context.getString(R.string.sheet_name), dataModel);
+
+        restUpdateSchedToAbsentGSheet.execute();
     }
 
 }

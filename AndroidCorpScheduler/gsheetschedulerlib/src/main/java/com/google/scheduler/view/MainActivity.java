@@ -1,11 +1,14 @@
 package com.google.scheduler.view;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
@@ -47,6 +50,7 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
     private List<DataModel> employees = new ArrayList<>();
 
     private boolean isUserNotPermittedAlreadyCalled;
+    private AlertDialog tagAsAbsentDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +62,35 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
         main_list = findViewById(R.id.main_list);
 
         View listHeaderView = getLayoutInflater().inflate(R.layout.header_main_list,null);
-        main_list.addHeaderView(listHeaderView);
+        main_list.addHeaderView(listHeaderView, null, false);
+        main_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, final int position, long l) {
+                if(!employees.isEmpty() && employees.get(position) != null) {
+
+                    tagAsAbsentDialog = new AlertDialog.Builder(MainActivity.this)
+                            .setCancelable(false)
+                            .setMessage(String.format(MainActivity.this.getString(R.string.label_update_employee_to_absent), employees.get(position).getName()))
+                            .setPositiveButton(MainActivity.this.getString(R.string.ok), new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    loader_bar.setVisibility(View.VISIBLE);
+                                    mainPresenter.tagEmployeeAsAbsent(employees.get(position));
+                                    getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                                            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                    dialog.dismiss();
+                                }
+                            })
+                            .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .show();
+                }
+            }
+        });
         emptyListMsgLayout = findViewById(R.id.rl_empty_list_row);
         emptyListMsgLayout.setVisibility(View.GONE);
         main_list.setVisibility(View.GONE);
@@ -219,6 +251,14 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
     @Override
     public void requestForAuthorization(Intent intent) {
         startActivityForResult(intent, REQUEST_PERMISSIONS);
+
+        if(tagAsAbsentDialog != null) {
+            tagAsAbsentDialog.dismiss();
+        }
+
+        loader_bar.setVisibility(View.GONE);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
     }
 
     @Override
@@ -238,11 +278,26 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
                         loader_bar.setVisibility(View.GONE);
                         emptyListMsgLayout.setVisibility(View.VISIBLE);
                     }
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
 
                     Toast.makeText(MainActivity.this, messageAlert, Toast.LENGTH_SHORT).show();
 
                 }
             });
+        }
+    }
+
+    @Override
+    public void tagEmployeeAsAbsentResponse(boolean isSuccessful, DataModel dataModel) {
+
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+        if(isSuccessful) {
+            refreshData();
+        } else {
+            Toast.makeText(MainActivity.this, String.format(getString(R.string.unable_to_update_to_absent), dataModel.getName()), Toast.LENGTH_SHORT).show();
+
         }
     }
 }

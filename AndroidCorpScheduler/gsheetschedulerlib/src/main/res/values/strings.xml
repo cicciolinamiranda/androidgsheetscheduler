@@ -13,10 +13,12 @@
     <string name="error_sign_in">Oops, something went wrong. Please check your network connection</string>
     <string name="spreadsheet_id">1Q_Dc-fLg0-9AX4vx_mbm8AshMwhfFS5pavCvHnQD9LM</string>
 
-    <string name="error_user_unauthorized_in_gsheet">User not authorized in gsheet id 1%s</string>
+    <string name="error_user_unauthorized_in_gsheet">User not authorized in gsheet id %1$s</string>
 
     <string name="spinner_prompt">- SELECT -</string>
     <string name="no_records_for_today">No records found for today.</string>
+    <string name="unable_to_update_to_absent">Unable to update 1%s to absent</string>
+    <string name="label_update_employee_to_absent">Tag %1$s as absent(A)?</string>
 
     <string-array name="spinner_arrays">
         <item>item 1</item>

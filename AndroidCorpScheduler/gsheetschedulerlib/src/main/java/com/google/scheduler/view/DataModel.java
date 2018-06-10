@@ -12,13 +12,14 @@ public class DataModel {
     String tierGroup;
     String role;
     DateTime time;
+    String columnLetter;
 
-    public DataModel(String name, String tierGroup, String role, DateTime time ) {
+    public DataModel(String name, String tierGroup, String role, DateTime time, String columnLetter) {
         this.name=name;
         this.tierGroup=tierGroup;
         this.role=role;
         this.time=time;
-
+        this.columnLetter = columnLetter;
     }
 
     public String getName() {
@@ -35,5 +36,9 @@ public class DataModel {
 
     public DateTime getTime() {
         return this.time;
+    }
+
+    public String getColumnLetter() {
+        return columnLetter;
     }
 }

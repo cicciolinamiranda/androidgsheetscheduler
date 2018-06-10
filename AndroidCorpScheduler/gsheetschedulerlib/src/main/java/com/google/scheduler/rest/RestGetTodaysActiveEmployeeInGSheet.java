@@ -40,6 +40,9 @@ public class RestGetTodaysActiveEmployeeInGSheet extends BaseGSheetAsyncTask {
     private String lob;
     private ShiftRange shiftRange;
     private final Pattern P = Pattern.compile(".*([01]?[0-9]|2[0-3]):[0-5][0-9].*");
+    private String todaysColumnLetter;
+    private String yesterdaysColumnLetter;
+
     public RestGetTodaysActiveEmployeeInGSheet(GoogleAccountCredential googleAccountCredential,
                                                Context context,
                                                RestGetTodaysActiveEmployeeInGSheet.Listener listener,
@@ -69,20 +72,20 @@ public class RestGetTodaysActiveEmployeeInGSheet extends BaseGSheetAsyncTask {
 
             Log.d(RestGetTodaysActiveEmployeeInGSheet.class.getName(), dateSheetRange.getValues().toString());
 
-            String todaysDateColumn = getTodaysDateColumn(dateSheetRange.getValues());
+            todaysColumnLetter = getTodaysDateColumn(dateSheetRange.getValues());
 
-            String yesterdaysDateColumn = getYesterdaysDateColumn(dateSheetRange.getValues());
+            yesterdaysColumnLetter = getYesterdaysDateColumn(dateSheetRange.getValues());
 
-            if(todaysDateColumn != null) {
-                String todaysTimeDataRange = tabSheetName + "!" + todaysDateColumn + "2:" + todaysDateColumn;
+            if(todaysColumnLetter != null) {
+                String todaysTimeDataRange = tabSheetName + "!" + todaysColumnLetter + "2:" + todaysColumnLetter;
                 ValueRange todaysTimeSheetRange = mService.spreadsheets().values()
                         .get(spreadsheetId, todaysTimeDataRange)
                         .execute();
 
                 ValueRange yesterdaysTimeSheetRange = null;
 
-                if(yesterdaysDateColumn != null) {
-                    String yesterdaysTimeDataRange = tabSheetName + "!" + yesterdaysDateColumn + "2:" + yesterdaysDateColumn;
+                if(yesterdaysColumnLetter != null) {
+                    String yesterdaysTimeDataRange = tabSheetName + "!" + yesterdaysColumnLetter + "2:" + yesterdaysColumnLetter;
 
 
                     yesterdaysTimeSheetRange = mService.spreadsheets().values()
@@ -95,7 +98,7 @@ public class RestGetTodaysActiveEmployeeInGSheet extends BaseGSheetAsyncTask {
 
                     List<Integer> indexThatNeedsToBeRetrieved = getListOfRowNumThatIsOnDuty(yesterdaysTimeSheetRange, todaysTimeSheetRange);
 
-                    String employeeDataRange = tabSheetName + "!" + WHOLE_WITHOUT_HEADERS_DATA_RANGE + todaysDateColumn;
+                    String employeeDataRange = tabSheetName + "!" + WHOLE_WITHOUT_HEADERS_DATA_RANGE + todaysColumnLetter;
                     ValueRange wholeDataRange = mService.spreadsheets().values()
                             .get(spreadsheetId, employeeDataRange)
                             .execute();
@@ -229,7 +232,7 @@ public class RestGetTodaysActiveEmployeeInGSheet extends BaseGSheetAsyncTask {
                         ) {
                     employeeNames.add((String)employeeArr.get(4));
 
-                    employeeList.add(new DataModel(((String)employeeArr.get(4)),((String)employeeArr.get(1)),((String)employeeArr.get(3)), getShiftIsBetweenRangeToday((String)employeeArr.get(employeeArr.size()-1))));
+                    employeeList.add(new DataModel(((String)employeeArr.get(4)),((String)employeeArr.get(1)),((String)employeeArr.get(3)), getShiftIsBetweenRangeToday((String)employeeArr.get(employeeArr.size()-1)), todaysColumnLetter));
                 }
 
             if(!employeeArr.isEmpty() && employeeArr.size() >= 4 &&
@@ -241,7 +244,7 @@ public class RestGetTodaysActiveEmployeeInGSheet extends BaseGSheetAsyncTask {
                     ) {
 
                 employeeNames.add((String)employeeArr.get(4));
-                employeeList.add(new DataModel(((String)employeeArr.get(4)),((String)employeeArr.get(1)),((String)employeeArr.get(3)), getShiftIsBetweenRangeYesterday((String)employeeArr.get(employeeArr.size()-2))));
+                employeeList.add(new DataModel(((String)employeeArr.get(4)),((String)employeeArr.get(1)),((String)employeeArr.get(3)), getShiftIsBetweenRangeYesterday((String)employeeArr.get(employeeArr.size()-2)), yesterdaysColumnLetter));
             }
 
         }
