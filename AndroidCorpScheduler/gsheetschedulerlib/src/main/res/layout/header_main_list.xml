@@ -49,7 +49,7 @@
                 android:textColor="@color/colorPrimaryLight"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Schedule"
+                android:text="Schedule (MNL time)"
                 android:textAlignment="center"
                 android:layout_weight="1"/>
         </LinearLayout>
