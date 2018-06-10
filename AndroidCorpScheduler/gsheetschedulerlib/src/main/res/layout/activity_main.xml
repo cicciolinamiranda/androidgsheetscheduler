@@ -55,9 +55,7 @@
         android:layout_below="@+id/loading_progress"/>
 
     <include
-        layout="@layout/empty_list_row"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        layout="@layout/empty_list_row"/>
 
 
 </RelativeLayout>
