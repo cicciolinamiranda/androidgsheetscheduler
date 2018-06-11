@@ -1,7 +1,6 @@
 package com.google.scheduler.view;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +27,7 @@ public class MainListAdapter extends ArrayAdapter<DataModel> {
     private static class ViewHolder {
         TextView txt_name;
         TextView txt_role;
+        TextView txt_tagged_as_absent;
         TextView txt_time_start;
         TextView txt_time_end;
     }
@@ -36,17 +36,6 @@ public class MainListAdapter extends ArrayAdapter<DataModel> {
         super(context, R.layout.custom_list_row, data);
         this.dataSet = data;
         this.mContext=context;
-    }
-
-    @Nullable
-    @Override
-    public DataModel getItem(int position) {
-        return dataSet.get(position);
-    }
-
-    @Override
-    public int getCount() {
-        return dataSet.size();
     }
 
     @Override
@@ -69,6 +58,7 @@ public class MainListAdapter extends ArrayAdapter<DataModel> {
                 viewHolder.txt_role = convertView.findViewById(R.id.txt_role);
                 viewHolder.txt_time_start = convertView.findViewById(R.id.txt_time_start);
                 viewHolder.txt_time_end = convertView.findViewById(R.id.txt_time_end);
+                viewHolder.txt_tagged_as_absent = convertView.findViewById(R.id.txt_tagged_as_absent);
             }else{
                 convertView = inflater.inflate(R.layout.empty_list_row, parent, false);
             }
@@ -94,6 +84,7 @@ public class MainListAdapter extends ArrayAdapter<DataModel> {
             }
 
         }
+
         return convertView;
     }
 }

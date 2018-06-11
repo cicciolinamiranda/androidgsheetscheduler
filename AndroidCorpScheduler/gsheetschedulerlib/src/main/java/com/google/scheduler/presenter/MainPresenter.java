@@ -92,9 +92,9 @@ public class MainPresenter {
                     public void result(Integer updatedRow) {
 
                         if(updatedRow != null && updatedRow > 0) {
-                            listener.tagEmployeeAsAbsentResponse(true, dataModel);
+                            listener.tagOrUnTagEmployeeAsAbsentResponse(true, dataModel);
                         } else {
-                            listener.tagEmployeeAsAbsentResponse(false, dataModel);
+                            listener.tagOrUnTagEmployeeAsAbsentResponse(false, dataModel);
                         }
                     }
 
@@ -111,6 +111,11 @@ public class MainPresenter {
                 context.getString(R.string.sheet_name), dataModel);
 
         restUpdateSchedToAbsentGSheet.execute();
+    }
+
+    public void removeTagEmployeeAsAbsent(final DataModel dataModel) {
+
+
     }
 
 }

@@ -4,6 +4,8 @@
     <string name="error_msg_invalid_server_client_id">Invalid server client ID in strings.xml, must end with</string>
     <string name="log_out">Log out</string>
     <string name="sheet_name">Schedule Dashboard</string>
+    <string name="sheet_name_absent">Absent Adhoc Spreadsheet</string>
+
     <string name="label_wanna_logout">Are you sure you want to logout?</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
@@ -18,7 +20,12 @@
     <string name="spinner_prompt">- SELECT -</string>
     <string name="no_records_for_today">No records found for today.</string>
     <string name="unable_to_update_to_absent">Unable to update 1%s to absent</string>
-    <string name="label_update_employee_to_absent">Tag %1$s as absent(A)?</string>
+    <string name="alert_dialog_msg_employee_contact_details">Contact Details</string>
+
+    <string name="alert_dialog_msg_tag_employee_to_absent">Tag as absent</string>
+
+    <string name="label_tag_employee_to_absent">Tag \'%1$s\' as absent(A)?</string>
+    <string name="label_remove_employee_to_absent">Remove absent(A) in \'%1$s\' ?</string>
 
     <string-array name="spinner_arrays">
         <item>item 1</item>

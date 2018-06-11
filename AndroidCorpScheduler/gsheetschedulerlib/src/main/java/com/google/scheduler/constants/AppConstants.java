@@ -14,6 +14,8 @@ public class AppConstants {
     public static final int RC_GET_TOKEN = 9002;
 
     public static final int REQUEST_AUTHORIZATION = 0x96;
+    public static final String LABEL_TAGGED_AS_ABSENTS = "absents_list";
+
     public static final String[] SCOPES = { DriveScopes.DRIVE };
 
     public static final String PH_TIMEZONE = "Asia/Taipei";

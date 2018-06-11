@@ -16,6 +16,6 @@ public interface MainInterface {
     void getLobsResponse(List<String> lobList);
     void requestForAuthorization(Intent intent);
     void userNotPermitted(String message);
-    void tagEmployeeAsAbsentResponse(boolean isSuccessful, DataModel dataModel);
+    void tagOrUnTagEmployeeAsAbsentResponse(boolean isSuccessful, DataModel dataModel);
 
 }

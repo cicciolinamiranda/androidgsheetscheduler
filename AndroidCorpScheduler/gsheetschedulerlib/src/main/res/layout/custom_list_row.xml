@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_weight="3"
-            android:weightSum="2">
+            android:weightSum="3">
 
             <TextView
                 android:id="@+id/txt_name"
@@ -48,6 +48,21 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="TEXT"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txt_tagged_as_absent"
+                    android:layout_width="wrap_content"
+                    android:visibility="invisible"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:layout_height="wrap_content"
+                    android:text="Tagged as Absent"/>
             </LinearLayout>
 
 

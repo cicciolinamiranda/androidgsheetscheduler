@@ -2,13 +2,13 @@ package com.google.scheduler.view;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
@@ -66,29 +66,40 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
         main_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, final int position, long l) {
-                if(!employees.isEmpty() && employees.get(position) != null) {
 
-                    tagAsAbsentDialog = new AlertDialog.Builder(MainActivity.this)
-                            .setCancelable(false)
-                            .setMessage(String.format(MainActivity.this.getString(R.string.label_update_employee_to_absent), employees.get(position).getName()))
-                            .setPositiveButton(MainActivity.this.getString(R.string.ok), new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
+                final int newPosition = position - main_list.getHeaderViewsCount();
 
-                                    loader_bar.setVisibility(View.VISIBLE);
-                                    mainPresenter.tagEmployeeAsAbsent(employees.get(position));
-                                    getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                                            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                                    dialog.dismiss();
+                if(!employees.isEmpty() && employees.get(newPosition) != null) {
+                    AlertDialog.Builder selectEmployeeDialog  = new AlertDialog.Builder(
+                            MainActivity.this);
+
+                    selectEmployeeDialog.setTitle(employees.get(newPosition).getName());
+                    selectEmployeeDialog.setNeutralButton(getString(R.string.alert_dialog_msg_employee_contact_details),
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface arg0, int arg1) {
+
+                                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://moma.corp.google.com/person/"+employees.get(newPosition).getName()));
+                                    startActivity(browserIntent);
+
                                 }
-                            })
-                            .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                            });
 
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
+
+                    selectEmployeeDialog.setPositiveButton(getString(R.string.alert_dialog_msg_tag_employee_to_absent),
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface arg0, int arg1) {
+
+                                    showTagAsAbsentDialogBox(employees.get(newPosition));
+
                                 }
-                            })
-                            .show();
+                            });
+
+                    selectEmployeeDialog.show();
+
+
                 }
+
+
             }
         });
         emptyListMsgLayout = findViewById(R.id.rl_empty_list_row);
@@ -124,6 +135,27 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
             }
         });
 
+    }
+
+    private void showTagAsAbsentDialogBox(final DataModel dataModel) {
+        tagAsAbsentDialog = new AlertDialog.Builder(MainActivity.this)
+                .setCancelable(false)
+                .setMessage(String.format(MainActivity.this.getString(R.string.label_tag_employee_to_absent), dataModel.getName()))
+                .setPositiveButton(MainActivity.this.getString(R.string.ok), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        loader_bar.setVisibility(View.VISIBLE);
+                        mainPresenter.tagEmployeeAsAbsent(dataModel);
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
     }
 
     private void refreshData() {
@@ -257,41 +289,40 @@ public class MainActivity extends BaseAuthActivity implements MainInterface {
         }
 
         loader_bar.setVisibility(View.GONE);
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
     }
 
     @Override
     public void userNotPermitted(final String message) {
 
-        if(!isUserNotPermittedAlreadyCalled) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     String messageAlert = message;
                     isUserNotPermittedAlreadyCalled = true;
 
-                    if(message.equalsIgnoreCase("The caller does not have permission")) {
+                    if(!isUserNotPermittedAlreadyCalled && message.equalsIgnoreCase("The caller does not have permission")) {
                         messageAlert = String.format(getString(R.string.error_user_unauthorized_in_gsheet), getString(R.string.spreadsheet_id));
                         logout();
-                    } else {
+                    }
+
+                    else if( message.contentEquals("You are trying to edit a protected cell or object. Please contact the spreadsheet owner to remove protection if you need to edit.")){
+                        loader_bar.setVisibility(View.GONE);
+                    }
+                    else {
                         loader_bar.setVisibility(View.GONE);
                         emptyListMsgLayout.setVisibility(View.VISIBLE);
                     }
-                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
 
                     Toast.makeText(MainActivity.this, messageAlert, Toast.LENGTH_SHORT).show();
 
                 }
             });
-        }
     }
 
     @Override
-    public void tagEmployeeAsAbsentResponse(boolean isSuccessful, DataModel dataModel) {
-
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+    public void tagOrUnTagEmployeeAsAbsentResponse(boolean isSuccessful, DataModel dataModel) {
 
         if(isSuccessful) {
             refreshData();

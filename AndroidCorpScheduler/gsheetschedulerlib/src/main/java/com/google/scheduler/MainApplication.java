@@ -20,7 +20,6 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
         JodaTimeAndroid.init(this);
-
     }
 
     public static String getEmail() {
