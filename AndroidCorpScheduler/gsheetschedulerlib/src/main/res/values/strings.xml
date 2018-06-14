@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">GSheet Scheduler lib</string>
-    <string name="server_client_id">820576940163-d7neeekrub3snqmosp1ss5197ptnand4.apps.googleusercontent.com</string>
+    <string name="server_client_id">insert server client id here</string>
     <string name="error_msg_invalid_server_client_id">Invalid server client ID in strings.xml, must end with</string>
     <string name="log_out">Log out</string>
     <string name="sheet_name">Schedule Dashboard</string>
